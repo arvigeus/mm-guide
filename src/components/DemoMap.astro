@@ -1,0 +1,24 @@
+---
+import { places } from '../data/places';
+// The fallback is deliberately schematic, not a navigational map.
+const positions: Record<string, [number, number]> = {
+  'bai-chay-beach': [36, 32], 'tuan-chau-harbour': [17, 60], 'quang-ninh-museum': [76, 31],
+  'ha-long-market': [60, 27], 'ti-top-island': [60, 69], 'sung-sot-cave': [74, 81],
+};
+const symbols = { 'Bay & boats': '↗', Beaches: '☀', Culture: '▥', Food: '♧' };
+---
+<div id="demo-map" class="demo-map" aria-label="Illustrated Ha Long demo map with clickable places">
+  <svg class="map-landscape" viewBox="0 0 1100 440" preserveAspectRatio="none" aria-hidden="true">
+    <defs><pattern id="waves" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M0 30q12-6 24 0t24 0" fill="none" stroke="#8ab9b4" stroke-width=".7" opacity=".2" /></pattern></defs>
+    <rect width="1100" height="440" fill="#d3e7e4" /><rect width="1100" height="440" fill="url(#waves)" />
+    <path d="M0 0H1100V105L1020 116 954 100 905 124 830 133 764 115 705 123 660 157 620 138 565 130 525 96 488 102 456 145 411 166 371 159 328 202 287 196 270 172 208 197 163 224 98 251 51 256 0 285Z" fill="#edf0df" stroke="#c2d2ba" stroke-width="2" />
+    <g fill="#d9e2c9"><path d="m0 29 180-12 64 58-68 59L0 174Z"/><path d="m660 0 230 0 45 78-177 16Z"/><path d="m357 24 88 2 17 49-104 15Z"/></g>
+    <path d="M-20 214Q150 140 264 158T450 112 650 93 900 71 1120 83" fill="none" stroke="#fffdf8" stroke-width="10" /><path d="M-20 214Q150 140 264 158T450 112 650 93 900 71 1120 83" fill="none" stroke="#ded9be" stroke-width="2" /><path d="m535 117 51 31" stroke="#fffdf8" stroke-width="9" />
+    <g fill="#b9cdaa" stroke="#a5bea0" stroke-width="1.5"><path d="m130 286 41-40 31 7 26 27-21 30-48 10Z"/><path d="m587 292 17-17 22 9 8 27-25 14-27-12Z"/><path d="m764 373 15-18 28 1 12 25-26 13-31-6Z"/><path d="m891 274 23-18 37 21-7 32-36 2Z"/><path d="m441 351 21-22 27 18-8 29-37-1Z"/><path d="m977 383 30-13 24 20-7 22-38-3Z"/></g>
+    <g fill="#789087" font-family="Arial,sans-serif" font-size="13" letter-spacing="2"><text x="290" y="60">BÃI CHÁY</text><text x="730" y="52">HÒN GAI</text><text x="76" y="360">TUẦN CHÂU</text><text x="455" y="263" font-size="20" fill="#7da4a0" letter-spacing="6">HA LONG BAY</text></g>
+    <path d="M365 168Q300 300 192 280M365 168Q530 230 651 304T797 371" fill="none" stroke="#8fb5ac" stroke-width="1.5" stroke-dasharray="5 8" />
+  </svg>
+  <div class="demo-origin" title="Sample starting point in Bãi Cháy"><span></span><small>Demo start</small></div>
+  {places.map(place => <a class="demo-pin" data-pin={place.slug} href={`/places/${place.slug}/`} style={`left:${positions[place.slug][0]}%;top:${positions[place.slug][1]}%`} aria-label={`Explore ${place.name}`}><span>{symbols[place.category]}</span><span class="pin-label">{place.name}</span></a>)}
+  <span class="map-north">N ↑</span><span class="map-disclaimer">Illustrated demo · not to scale</span>
+</div>

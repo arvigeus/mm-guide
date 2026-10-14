@@ -1,0 +1,13 @@
+---
+import Icon from '../components/Icon.astro';
+import '../styles/global.css';
+interface Props { title?: string; description?: string }
+const { title = 'A little Ha Long — find your next little adventure', description = 'Explore Ha Long, Vietnam. A small guide to the bay, beaches, culture, and local food.' } = Astro.props;
+---
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content={description} /><link rel="icon" type="image/svg+xml" href="/favicon.svg" /><title>{title}</title></head>
+  <body><a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header shell"><a class="brand" href="/" aria-label="A little Ha Long home"><span class="brand-mark"><Icon name="boat" size={25} /></span><span>a little <strong>Ha Long</strong><span class="brand-caption">A LOCAL KIND OF ADVENTURE</span></span></a><span class="destination"><Icon name="pin" size={17} /> Ha Long, Vietnam <span class="country-dot"></span></span></header>
+    <main id="main" class="shell"><slot /></main><footer class="site-footer shell"><span>A little discovery. A lovely day.</span><span>Made for exploring · Ha Long PoC</span></footer>
+  </body>
+</html>

@@ -1,16 +1,31 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import DemoMap from '../components/DemoMap.astro';
+import PlaceArt from '../components/PlaceArt.astro';
+import { places, demoLocation } from '../data/places';
+import { distanceKm, findPlaces, formatDistance } from '../lib/explore';
+import 'leaflet/dist/leaflet.css';
+const initialPlaces = findPlaces(places, '', 'All', demoLocation);
+const categories = [{ name: 'All', icon: 'compass', label: 'Everything' }, { name: 'Bay & boats', icon: 'boat' }, { name: 'Beaches', icon: 'beach' }, { name: 'Culture', icon: 'culture' }, { name: 'Food', icon: 'food' }];
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <section class="intro"><div><p class="eyebrow">GO A LITTLE FURTHER</p><h1>Find your kind of <em>Ha Long.</em></h1><p>Big views, little discoveries. See what’s around you.</p></div><div class="intro-note"><Icon name="compass" size={34} /><span>A day to wander.<br />A place to remember.</span></div></section>
+  <form id="search-form" class="search-bar" role="search"><Icon name="search" size={23} /><label class="sr-only" for="search">Search places in Ha Long</label><input id="search" type="search" placeholder="Try a beach, a boat trip, or a little local culture…" autocomplete="off" /><button class="button primary" type="submit">Explore <Icon name="arrow" size={18} /></button></form>
+  <nav class="category-bar" aria-label="Filter by experience">{categories.map(category => <button type="button" class:list={['category', { active: category.name === 'All' }]} data-category={category.name} aria-pressed={category.name === 'All'}><Icon name={category.icon} /><span>{category.label || category.name}</span></button>)}</nav>
+  <section class="map-section" aria-labelledby="map-heading">
+    <div class="section-heading"><div><h2 id="map-heading">A little look around</h2><p id="location-label"><span class="status-dot"></span>Starting in Bãi Cháy · demo location</p></div><button id="locate" class="button secondary" type="button"><Icon name="locate" size={18} /><span>Use my location</span></button></div>
+    <div class="map-frame"><DemoMap /><div id="live-map" class="live-map" hidden aria-label="Interactive map of Ha Long attractions"></div><span id="live-map-label" class="live-map-label" hidden>Tap a pin to explore</span></div>
+    <div class="map-footnote"><span><span class="legend-dot"></span>Places to discover <span class="legend-dot blue"></span>Your starting point</span><span id="map-status" role="status">Loading the map… You can already explore the illustrated pins.</span></div>
+    <button id="retry-map" class="reset-location" type="button" hidden>Try the live map again</button>
+    <p id="location-message" class="location-message" role="status"></p>
+  </section>
+  <section class="results-section" aria-labelledby="results-heading">
+    <div class="section-heading results-heading"><div><p class="eyebrow">LET CURIOSITY LEAD</p><h2 id="results-heading">Good places to start</h2><p id="result-count" role="status">6 discoveries, nearest first</p></div><label class="nearby-toggle"><input type="checkbox" id="nearby" /><span>Within 10 km</span></label></div>
+    <div id="results" class="results-grid">{initialPlaces.map(place => <article class="place-card" data-card={place.slug}><a class="card-image-link" href={`/places/${place.slug}/`} aria-label={`Discover ${place.name}`}><PlaceArt place={place} /><span class="card-category">{place.category}</span></a><div class="card-body"><p class="card-area"><Icon name="pin" size={13} />{place.area}<span class="card-distance" data-distance={place.slug}>{formatDistance(distanceKm(demoLocation, place.coordinates))} away</span></p><h3><a href={`/places/${place.slug}/`}>{place.name}</a></h3><p class="card-description">{place.description}</p><div class="card-bottom"><span>{place.access}</span><a class="card-action" href={`/places/${place.slug}/`} aria-label={`View ${place.name}`}><Icon name="arrow" size={18} /></a></div></div></article>)}</div>
+    <div id="empty-state" class="empty-state" hidden><Icon name="compass" size={40} /><h3>A little further afield?</h3><p>No places match those filters. Try another search or widen your distance.</p><button id="reset-filters" type="button" class="button secondary">Show all discoveries</button></div>
+    <p class="sample-note">A small, curated sample for this prototype. Distances are straight-line estimates; islands require a boat.</p>
+  </section>
+  <aside class="closing-note"><Icon name="boat" size={34} /><div><h3>The best days leave a little room for discovery.</h3><p>Pick a place. Take your time. Make Ha Long your own.</p></div><span>HẠ LONG, VIỆT NAM</span></aside>
+</Layout>
+<script>import '../scripts/explore';</script>

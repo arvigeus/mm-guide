@@ -1,0 +1,9 @@
+---
+import Icon from './Icon.astro';
+import type { Place } from '../data/places';
+interface Props { place: Place; large?: boolean }
+const { place, large = false } = Astro.props;
+---
+<div class:list={['place-art', `art-${place.art}`, { 'art-large': large }]}>
+  {['bay', 'beach'].includes(place.art) ? <img src="/images/ha-long-bay.jpg" alt="Boats and limestone islands in Ha Long Bay; illustrative bay photograph" loading={large ? 'eager' : 'lazy'} width="1280" height="857" /> : <><span class="art-orbit"></span><Icon name={place.art === 'museum' ? 'culture' : 'food'} size={large ? 100 : 54} /><span class="art-caption">{place.art === 'museum' ? 'LOCAL STORIES' : 'A TASTE OF HA LONG'}</span></>}
+</div>
