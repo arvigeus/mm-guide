@@ -30,7 +30,7 @@ function render() {
   for (const [slug, card] of cards) card.hidden = !visible.has(slug);
   for (const place of filtered) {
     const card = cards.get(place.slug)!;
-    card.querySelector<HTMLElement>('[data-distance]')!.textContent = `${formatDistance(distanceKm(origin, place.coordinates))} away`;
+    card.querySelector<HTMLElement>('[data-distance]')!.textContent = `Cách ${formatDistance(distanceKm(origin, place.coordinates))}`;
     results.append(card);
   }
   for (const pin of pins) pin.hidden = !visible.has(pin.dataset.pin!);
@@ -39,7 +39,7 @@ function render() {
     else if (!visible.has(slug) && map.hasLayer(marker)) marker.remove();
   }
   document.querySelector<HTMLElement>('#empty-state')!.hidden = filtered.length > 0;
-  document.querySelector<HTMLElement>('#result-count')!.textContent = `${filtered.length} ${filtered.length === 1 ? 'discovery' : 'discoveries'}, nearest first${nearby.checked ? ' · within 10 km' : ''}`;
+  document.querySelector<HTMLElement>('#result-count')!.textContent = `${filtered.length} địa điểm, gần nhất trước${nearby.checked ? ' · trong bán kính 10 km' : ''}`;
   for (const button of categories) {
     const active = button.dataset.category === category;
     button.classList.toggle('active', active);
@@ -57,46 +57,46 @@ for (const button of categories) button.addEventListener('click', () => { catego
 document.querySelector('#reset-filters')!.addEventListener('click', () => { search.value = ''; category = 'All'; nearby.checked = false; render(); search.focus(); });
 
 const resetLocation = document.createElement('button');
-resetLocation.type = 'button'; resetLocation.className = 'reset-location'; resetLocation.textContent = 'Back to Ha Long demo'; resetLocation.hidden = true;
+resetLocation.type = 'button'; resetLocation.className = 'reset-location'; resetLocation.textContent = 'Về vị trí mẫu ở Hồ Hoàn Kiếm'; resetLocation.hidden = true;
 message.after(resetLocation);
 resetLocation.addEventListener('click', () => {
   origin = { ...demoLocation }; usingLocation = false; resetLocation.hidden = true; message.textContent = '';
-  document.querySelector<HTMLElement>('#location-label')!.textContent = 'Starting in Bãi Cháy · demo location';
+  document.querySelector<HTMLElement>('#location-label')!.textContent = 'Bắt đầu tại Hồ Hoàn Kiếm · vị trí mẫu';
   document.querySelector<HTMLElement>('.demo-origin')!.hidden = false;
   updateLocationMarker();
   fitDestinations(); render();
 });
 
 locate.addEventListener('click', () => {
-  if (!navigator.geolocation) { message.textContent = 'This browser cannot provide a location. You can still explore from the Ha Long demo starting point.'; return; }
-  if (!window.isSecureContext) { message.textContent = 'Location needs HTTPS or localhost. You can still explore using the demo starting point.'; return; }
-  locate.disabled = true; locate.querySelector('span')!.textContent = 'Finding you…';
-  message.textContent = 'Your browser will ask to use your location. It is used for this visit only.';
+  if (!navigator.geolocation) { message.textContent = 'Trình duyệt này không hỗ trợ định vị. Bạn vẫn có thể khám phá từ vị trí mẫu ở Hồ Hoàn Kiếm.'; return; }
+  if (!window.isSecureContext) { message.textContent = 'Định vị cần kết nối HTTPS hoặc localhost. Bạn vẫn có thể khám phá từ vị trí mẫu.'; return; }
+  locate.disabled = true; locate.querySelector('span')!.textContent = 'Đang định vị…';
+  message.textContent = 'Trình duyệt sẽ xin phép truy cập vị trí. Ứng dụng chỉ dùng vị trí cho lần truy cập này, không lưu lại.';
   navigator.geolocation.getCurrentPosition(position => {
     origin = { lat: position.coords.latitude, lng: position.coords.longitude }; usingLocation = true;
     resetLocation.hidden = false;
-    document.querySelector<HTMLElement>('#location-label')!.textContent = 'Using your location · nearest places first';
+    document.querySelector<HTMLElement>('#location-label')!.textContent = 'Đang dùng vị trí của bạn · gần nhất trước';
     document.querySelector<HTMLElement>('.demo-origin')!.hidden = true;
     const outside = distanceKm(origin, demoLocation) > 50;
     message.textContent = outside
-      ? 'You’re outside Ha Long. Distances are from your location; use “Back to Ha Long demo” to preview a day here.'
-      : 'Distances now start from you. They are straight-line estimates, not travel routes.';
-    if (!map) message.textContent += ' The illustrated map stays in Ha Long; try the live map again to see your position.';
+      ? 'Bạn đang ở xa khu vực trung tâm Hà Nội. Khoảng cách tính từ vị trí của bạn; chọn “Về vị trí mẫu ở Hồ Hoàn Kiếm” để khám phá thử.'
+      : 'Khoảng cách hiện tính từ vị trí của bạn theo đường chim bay, không phải quãng đường di chuyển.';
+    if (!map) message.textContent += ' Sơ đồ minh họa vẫn hiển thị Hà Nội; thử tải lại bản đồ tương tác để xem vị trí của bạn.';
     updateLocationMarker();
     if (map) map.setView([origin.lat, origin.lng], 13);
     render(); finishLocate();
   }, error => {
     message.textContent = error.code === 1
-      ? 'Location permission was declined. You can keep exploring from the current starting point.'
-      : 'We couldn’t get your location. Try again, or keep exploring from the current starting point.';
+      ? 'Bạn chưa cho phép truy cập vị trí. Bạn vẫn có thể khám phá từ điểm xuất phát hiện tại.'
+      : 'Chưa thể xác định vị trí. Hãy thử lại hoặc tiếp tục khám phá từ điểm xuất phát hiện tại.';
     finishLocate();
   }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 });
 });
 
-function finishLocate() { locate.disabled = false; locate.querySelector('span')!.textContent = 'Use my location'; }
+function finishLocate() { locate.disabled = false; locate.querySelector('span')!.textContent = 'Dùng vị trí của tôi'; }
 function updateLocationMarker() {
   if (!locationMarker) return;
-  const title = usingLocation ? 'Your approximate location' : 'Demo starting point in Bãi Cháy';
+  const title = usingLocation ? 'Vị trí gần đúng của bạn' : 'Vị trí mẫu ở Hồ Hoàn Kiếm';
   locationMarker.setLatLng([origin.lat, origin.lng]).setTooltipContent(title);
   locationMarker.getElement()?.setAttribute('title', title);
 }
@@ -119,65 +119,67 @@ retryMap.addEventListener('click', () => { void connectMap(); });
 async function connectMap() {
   if (connecting || map) return;
   connecting = true; retryMap.hidden = true;
-  mapStatus.textContent = 'Loading the map…';
+  mapStatus.textContent = 'Đang tải bản đồ…';
   try {
     // Load Leaflet only in the browser; all code and styles are bundled locally.
     const L = await import('leaflet');
     liveMap.hidden = false;
-    map = L.map(liveMap, { scrollWheelZoom: false });
+    map = L.map(liveMap, { scrollWheelZoom: false, zoomControl: false });
+    L.control.zoom({ zoomInTitle: 'Phóng to', zoomOutTitle: 'Thu nhỏ' }).addTo(map);
+    map.attributionControl.setPrefix('<a href="https://leafletjs.com/" title="Thư viện bản đồ tương tác">Leaflet</a>');
     const activeMap = map;
     let loadedTiles = 0;
     let failedTiles = 0;
     // Standard browser image caching and referrer headers are retained.
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution: '&copy; Những người đóng góp cho <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     });
     tiles.on('loading', () => { loadedTiles = 0; failedTiles = 0; });
     tiles.on('tileload', () => {
       if (map !== activeMap) return;
       loadedTiles += 1; window.clearTimeout(tileTimeout);
-      mapStatus.textContent = 'Live map · zoom, drag, or tap a place to explore';
+      mapStatus.textContent = 'Bản đồ tương tác · phóng to, kéo hoặc chọn một địa điểm';
     });
     tiles.on('tileerror', () => { failedTiles += 1; });
     tiles.on('load', () => {
       if (map !== activeMap) return;
       if (loadedTiles === 0 && failedTiles > 0) {
-        mapFallback('Map tiles couldn’t load. You can still explore with the illustrated map.');
+        mapFallback('Không tải được hình ảnh bản đồ. Bạn vẫn có thể khám phá bằng sơ đồ minh họa.');
       } else if (failedTiles > 0) {
-        mapStatus.textContent = 'Some map tiles couldn’t load. Pins and place pages are still available.';
+        mapStatus.textContent = 'Một phần bản đồ chưa tải được. Các ghim và trang địa điểm vẫn hoạt động.';
       }
     });
-    const symbols: Record<Category, string> = { 'Bay & boats': '↗', Beaches: '☀', Culture: '▥', Food: '♧' };
+    const symbols: Record<Category, string> = { 'Hồ & cảnh quan': '≈', 'Phố & cầu': '↗', 'Di sản': '▥' };
     for (const place of places) {
       const pin = document.createElement('span'); pin.className = 'place-map-pin';
       const symbol = document.createElement('span'); symbol.textContent = symbols[place.category]; pin.append(symbol);
       const label = document.createElement('span'); label.textContent = place.name;
       const marker = L.marker([place.coordinates.lat, place.coordinates.lng], {
-        title: `Explore ${place.name}`,
+        title: `Khám phá ${place.name}`,
         icon: L.divIcon({ className: 'place-map-icon', html: pin, iconSize: [36, 36], iconAnchor: [18, 36], tooltipAnchor: [0, -36] }),
       }).bindTooltip(label, { direction: 'top' });
-      marker.on('add', () => { marker.getElement()?.setAttribute('aria-label', `Explore ${place.name}`); });
+      marker.on('add', () => { marker.getElement()?.setAttribute('aria-label', `Khám phá ${place.name}`); });
       marker.on('click', () => { window.location.assign(`/places/${place.slug}/`); });
       markers.set(place.slug, marker);
     }
     const dot = document.createElement('span'); dot.className = 'location-map-dot';
     locationMarker = L.marker([origin.lat, origin.lng], {
-      title: 'Demo starting point in Bãi Cháy', keyboard: false, zIndexOffset: 1000,
+      title: 'Vị trí mẫu ở Hồ Hoàn Kiếm', keyboard: false, zIndexOffset: 1000,
       icon: L.divIcon({ className: 'location-map-icon', html: dot, iconSize: [19, 19], iconAnchor: [9.5, 9.5] }),
-    }).bindTooltip('Demo starting point in Bãi Cháy').addTo(map);
+    }).bindTooltip('Vị trí mẫu ở Hồ Hoàn Kiếm').addTo(map);
     updateLocationMarker();
     demoMap.hidden = true; liveLabel.hidden = false;
     fitDestinations();
     if (usingLocation) map.setView([origin.lat, origin.lng], 13);
     tileTimeout = window.setTimeout(() => {
-      if (map === activeMap) mapFallback('The map is taking too long to load. Explore the illustrated pins or try again.');
+      if (map === activeMap) mapFallback('Bản đồ tải quá lâu. Bạn có thể chọn ghim trên sơ đồ minh họa hoặc thử lại.');
     }, 12000);
     tiles.addTo(map);
     render();
     connecting = false;
   } catch {
-    mapFallback('The live map is unavailable. You can still explore with the illustrated map.');
+    mapFallback('Bản đồ tương tác hiện không khả dụng. Bạn vẫn có thể khám phá bằng sơ đồ minh họa.');
   }
 }
 render(); void connectMap();

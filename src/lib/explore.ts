@@ -17,5 +17,5 @@ export function findPlaces(all: Place[], query: string, category: Category | 'Al
   }).sort((a, b) => distanceKm(origin, a.coordinates) - distanceKm(origin, b.coordinates));
 }
 export function formatDistance(distance: number): string {
-  return distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(1)} km`;
+  return distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toLocaleString('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} km`;
 }

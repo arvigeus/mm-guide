@@ -1,22 +1,48 @@
-# A little Ha Long
+# Một chút Hà Nội
 
-A tourist discovery proof of concept built with Astro. Search sits above a map, followed by cards that open individual place pages. The site is a static build with six hardcoded destinations, no database, accounts, or backend service.
+Bản mẫu hướng dẫn khám phá Hà Nội, xây dựng bằng Astro. Ứng dụng có bản đồ tương tác, tìm kiếm, bộ lọc và trang giới thiệu riêng cho sáu địa điểm: **Hồ Hoàn Kiếm, Phố Cổ, Văn Miếu, Hoàng thành Thăng Long, Hồ Tây, Cầu Long Biên**. Giao diện và nội dung bằng tiếng Việt.
 
-## Business decisions and billing
+Đây là website tĩnh với dữ liệu tuyển chọn, không có cơ sở dữ liệu, tài khoản, đặt vé hay thanh toán.
 
-See [the billing brief](docs/billing.md) for verified provider rates, normal and heavy-use estimates, directions options, and costs excluded from the operating subtotal. A [shareable PDF](output/pdf/ha-long-billing-brief.pdf) is available for management review. Prices were checked on October 14, 2026; usage forecasts are assumptions, not measured traffic or guaranteed bills.
+## Giao diện
 
-Future feature changes must include an updated billing assessment, as described in `AGENTS.md`. To regenerate the PDF after editing the brief, run `uv run --with reportlab python scripts/build-billing-brief.py`, then render and visually inspect the result.
+Bố cục mới tham khảo [Visit Norway](https://www.visitnorway.com/en/): phần mở đầu tràn chiều ngang, tiêu đề lớn, thanh điều hướng trắng với dấu nhấn đỏ, lưới thẻ địa điểm và chân trang kiểu tạp chí du lịch. Giữ nguyên nội dung Hà Nội, sáu địa điểm, bộ lọc và các chức năng bản đồ. Các trang chi tiết dùng cùng hệ thống trình bày.
 
-## Try it
+- Hình mở đầu ` mev9zaoqveug1.jpeg `.
+- Không nhúng tài nguyên hay mã nguồn Visit Norway; không gọi dịch vụ ảnh, video hoặc phông chữ mới.
+- Menu điện thoại dùng phần tử `details` có thể mở bằng bàn phím, đóng khi chọn liên kết, bấm bên ngoài hoặc nhấn Escape.
+- Không chạy máy chủ hay đối chiếu ảnh trong trình duyệt; đây là bản dựng theo phong cách tham khảo, chưa xác nhận khớp từng pixel với trang gốc. Trang gốc có thể thay đổi, và truy cập HTML/CSS trực tiếp gặp màn hình bảo vệ tự động.
+- PDF và kiểm thử được tạm hoãn theo yêu cầu của chủ dự án; các lệnh bên dưới dành cho một đợt kiểm tra sau trên máy phù hợp.
 
-Use Node 22.12+ and install dependencies with `npm install`.
+## Bản đồ và tìm kiếm
+
+- Leaflet hiển thị bản đồ OpenStreetMap, không cần khóa API hay tài khoản thanh toán.
+- Vị trí xuất phát mẫu ở Hồ Hoàn Kiếm. “Dùng vị trí của tôi” chỉ xin quyền khi được bấm; vị trí được giữ trong bộ nhớ cho lần truy cập, không được ứng dụng lưu lại.
+- Định vị cần HTTPS hoặc localhost. Khi dùng vị trí thật, bản đồ và khoảng cách được cập nhật; có nút quay về vị trí mẫu ở Hồ Hoàn Kiếm.
+- Tìm tên tiếng Việt có dấu hoặc không dấu, kết hợp với nhóm **Hồ & cảnh quan**, **Phố & cầu**, **Di sản** và giới hạn 10 km. Kết quả gần nhất xuất hiện trước.
+- Ghim và thẻ dẫn đến cùng trang địa điểm. Các liên kết bản đồ trên trang chi tiết mở OpenStreetMap.
+- Khi bản đồ không tải được, sơ đồ Hà Nội minh họa vẫn cho phép chọn địa điểm. Có nút thử tải lại.
+- Hình địa điểm là SVG minh họa đi kèm ứng dụng, không phải ảnh chụp thực tế. Ảnh vịnh cũ không còn được sử dụng trong giao diện.
+
+Tọa độ gần đúng, không phải cổng vào đã xác minh. Ghim Phố Cổ đại diện cho một khu vực; ghim Hồ Tây ở ven hồ phía đông nam. Khoảng cách là đường chim bay, không phải quãng đường hay thời gian di chuyển. Cần kiểm tra vé, giờ mở cửa, lối vào và quy định an toàn thực tế, đặc biệt tại Cầu Long Biên.
+
+Bản đồ chỉ tải các ô ảnh cần cho vùng đang xem từ `tile.openstreetmap.org`, giữ bộ nhớ đệm, thông tin nguồn và ghi công OpenStreetMap. Dịch vụ công cộng không có cam kết thời gian hoạt động; xem [chính sách sử dụng](https://operations.osmfoundation.org/policies/tiles/) trước khi triển khai rộng rãi.
+
+## Chi phí
+
+Xem nguồn chuẩn tại [`docs/billing.md`](docs/billing.md). Việc đổi thành phố, Việt hóa và dùng hình SVG không thêm dịch vụ trả phí; chi phí nhà cung cấp định kỳ tăng thêm dự kiến **0 USD/tháng** nếu giữ nguyên lưu lượng và mô hình website tĩnh. Công sức nội dung, phát triển, tên miền và triển khai chưa được báo giá.
+
+**PDF `output/pdf/ha-long-billing-brief.pdf` hiện là phiên bản Hạ Long cũ, chưa đồng bộ với Markdown mới.** Chưa tạo lại hoặc kiểm tra bố cục PDF do chính sách tài nguyên của môi trường này. Công cụ tạo PDF đã được đổi tiêu đề sang Hà Nội; giữ đường dẫn đầu ra cũ để tương thích.
+
+## Chạy trên máy phát triển
+
+Cần Node 22.12+ và các thư viện đã cài theo `package-lock.json`. Môi trường hiện tại không chạy máy chủ, kiểm thử hay build theo chính sách tài nguyên. Trên máy phù hợp:
 
 ```sh
 npm run dev -- --background
 ```
 
-Open **http://localhost:4321**. The live Leaflet map loads OpenStreetMap tiles immediately, with no API key or account setup. Pins and cards open the same detail pages. Search accepts Vietnamese names with or without accents, and combines with category and optional 10 km filters. Results sort by straight-line distance.
+Mở **http://localhost:4321**. Quản lý máy chủ bằng:
 
 ```sh
 npm run astro -- dev status
@@ -24,31 +50,17 @@ npm run astro -- dev logs
 npm run astro -- dev stop
 ```
 
-“Use my location” requests browser permission only when clicked. The position stays in memory for the visit; the app does not store it. The position appears as a blue dot on the live map. HTTPS or localhost is required for browser geolocation; a plain HTTP address on your local network usually cannot use it. If you're outside Ha Long, use “Back to Ha Long demo” to demonstrate nearby discoveries.
+## Chỉnh sửa nội dung
 
-## The map
+- `src/data/places.ts`: tên, nội dung, nhóm và tọa độ; các trang chi tiết sinh từ cùng danh sách.
+- `src/components/DemoMap.astro`: sơ đồ dự phòng và vị trí ghim minh họa. Ghim trên bản đồ thật lấy tọa độ từ dữ liệu.
+- `src/components/PlaceArt.astro`: hình SVG minh họa.
+- `src/styles/global.css`: kiểu hiển thị và bố cục màn hình nhỏ.
+- `src/layouts/Layout.astro`: thanh điều hướng, menu điện thoại và chân trang chung.
+- `public/images/ha-noi-hero.svg`: hình minh họa lớn ở đầu trang chủ.
+- `src/scripts/explore.ts`: bản đồ, định vị và cập nhật bộ lọc.
 
-The map uses [Leaflet](https://leafletjs.com/) with the standard [OpenStreetMap tile service](https://operations.osmfoundation.org/policies/tiles/). **No `.env` file, API key, billing account, or Google Maps setup is needed.** Leaflet's code and CSS are bundled with the application; map tiles load over HTTPS from `tile.openstreetmap.org` for the visible area.
-
-- Drag the map or use its zoom controls. Mouse-wheel zoom is disabled so scrolling the page stays comfortable.
-- Click a destination pin to open its place page. Pins also work with keyboard navigation; names appear on hover or focus.
-- Search, category, and nearby filters update both the cards and the live map's pins.
-- The initial blue dot is explicitly a sample starting point in Bãi Cháy. “Use my location” moves it to your browser-provided position and recalculates the distances. “Back to Ha Long demo” restores the sample position and map view.
-- If the map cannot initialise, all initial tile requests fail, or the initial tiles time out, an illustrated map keeps the place links usable. “Try the live map again” retries on demand. Partial tile failures display a status message.
-- Place-page map links open the destination in OpenStreetMap.
-
-OpenStreetMap attribution stays visible. Tile requests use normal browser caching and referrer headers, with no prefetch or bulk downloading. The public tile service is for this small PoC; before wider deployment, review its usage policy and choose a dedicated tile provider if needed. The tile URL and attribution are in `src/scripts/explore.ts`.
-
-## Refine it together
-
-- Edit names, descriptions, categories, and approximate coordinates in **`src/data/places.ts`**. Detail pages are generated from that same list.
-- For a new demo pin, add a schematic position to **`src/components/DemoMap.astro`**. Live Leaflet pins use the dataset's latitude and longitude automatically.
-- Edit visual styling in **`src/styles/global.css`**.
-- Bay photographs are atmospheric placeholders, not photos of each venue. Museum and market cards use illustrations. Replace these with destination-specific photos during refinement.
-
-Coordinates are approximate sample points, not verified entrances. Distances are straight-line estimates, not travel times. Offshore islands require boats. Prices, operating hours, availability, and booking are intentionally left for a later iteration.
-
-## Validate and build
+## Kiểm tra trên máy phù hợp
 
 ```sh
 npm run check
@@ -56,10 +68,21 @@ npm test
 npm run build
 ```
 
-Astro generates the home page and six detail pages in `dist/`, suitable for static hosting. Tests cover accent-insensitive search, combined filters, nearby filtering from different origins, and geographic distance/sorting.
+Bộ kiểm thử đã được cập nhật cho sáu địa điểm Hà Nội, tìm kiếm tiếng Việt, nhóm mới, sắp xếp khoảng cách, lọc theo vị trí và định dạng số Việt Nam, nhưng chưa chạy trong môi trường này. Kiểm tra trực quan thêm trên điện thoại và máy tính: trang chủ, sáu trang chi tiết, bản đồ tương tác, từ chối quyền định vị, vị trí ngoài Hà Nội, sơ đồ dự phòng và nút thử lại.
 
-## Credits
+Tạo lại tài liệu chi phí trên máy có Python/uv và ReportLab, rồi xuất từng trang thành ảnh để kiểm tra trực quan (không chạy các bước này trên VPS hiện tại):
 
-Ha Long Bay photograph: **Rafa Prada**, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ha_Long_Bay,_Vietnam_(Unsplash).jpg), published under **CC0**; resized and compressed locally. Illustration and interface assets are part of this project. Destination context: [Vietnam Tourism — Ha Long](https://vietnam.travel/places-to-go/red-river-delta/ha-long). Fonts: DM Sans and Newsreader, loaded from Google Fonts with system fallbacks.
+```sh
+uv run --with reportlab python scripts/build-billing-brief.py
+pdftoppm -scale-to 1400 -png output/pdf/ha-long-billing-brief.pdf /tmp/ha-noi-billing
+```
 
-Map data and tiles: © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright). Map rendering: [Leaflet](https://leafletjs.com/), BSD-2-Clause.
+Sau khi kiểm tra PDF, cập nhật trạng thái tài liệu trong Markdown và README để xác nhận đồng bộ.
+
+## Nguồn và ghi công
+
+Nội dung tham khảo: [Vietnam Tourism — Hà Nội](https://vietnam.travel/places-to-go/northern-vietnam/ha-noi). Nội dung chỉ mang tính giới thiệu, không cung cấp giờ mở cửa hay giá vé hiện hành.
+
+Dữ liệu và ô ảnh bản đồ: © [Những người đóng góp cho OpenStreetMap](https://www.openstreetmap.org/copyright). Thư viện bản đồ: [Leaflet](https://leafletjs.com/), giấy phép BSD-2-Clause. Hình SVG do dự án tạo. Giao diện dùng phông hệ thống Arial/Helvetica/sans-serif, không còn tải Google Fonts.
+
+Ảnh Hạ Long cũ còn lưu trong `public/images/ha-long-bay.jpg` nhưng không được hiển thị: Rafa Prada, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ha_Long_Bay,_Vietnam_(Unsplash).jpg), CC0.

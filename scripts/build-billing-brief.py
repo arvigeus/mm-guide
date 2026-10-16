@@ -88,7 +88,7 @@ def footer(canvas, doc):
     canvas.saveState()
     canvas.setFont('Helvetica', 8)
     canvas.setFillColor(colors.HexColor('#6e7c70'))
-    canvas.drawString(MARGIN, 26, 'Ha Long guide  |  Billing brief  |  14 October 2026')
+    canvas.drawString(MARGIN, 26, 'Ha Noi guide  |  Billing brief  |  Verification dates in source')
     canvas.drawRightString(PAGE_WIDTH - MARGIN, 26, f'Page {doc.page}')
     canvas.restoreState()
 
@@ -129,8 +129,8 @@ def build():
     document = SimpleDocTemplate(
         str(OUTPUT), pagesize=A4, rightMargin=MARGIN, leftMargin=MARGIN,
         topMargin=38, bottomMargin=43,
-        title='Ha Long guide billing and service options',
-        author='Ha Long guide project',
+        title='Ha Noi guide billing and service options',
+        author='Ha Noi guide project',
     )
     document.build(story, onFirstPage=footer, onLaterPages=footer)
     print(OUTPUT)

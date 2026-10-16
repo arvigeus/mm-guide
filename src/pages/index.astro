@@ -7,25 +7,83 @@ import { places, demoLocation } from '../data/places';
 import { distanceKm, findPlaces, formatDistance } from '../lib/explore';
 import 'leaflet/dist/leaflet.css';
 const initialPlaces = findPlaces(places, '', 'All', demoLocation);
-const categories = [{ name: 'All', icon: 'compass', label: 'Everything' }, { name: 'Bay & boats', icon: 'boat' }, { name: 'Beaches', icon: 'beach' }, { name: 'Culture', icon: 'culture' }, { name: 'Food', icon: 'food' }];
+const categories = [{ name: 'All', icon: 'compass', label: 'Tất cả' }, { name: 'Hồ & cảnh quan', icon: 'compass' }, { name: 'Phố & cầu', icon: 'pin' }, { name: 'Di sản', icon: 'culture' }];
 ---
-<Layout>
-  <section class="intro"><div><p class="eyebrow">GO A LITTLE FURTHER</p><h1>Find your kind of <em>Ha Long.</em></h1><p>Big views, little discoveries. See what’s around you.</p></div><div class="intro-note"><Icon name="compass" size={34} /><span>A day to wander.<br />A place to remember.</span></div></section>
-  <form id="search-form" class="search-bar" role="search"><Icon name="search" size={23} /><label class="sr-only" for="search">Search places in Ha Long</label><input id="search" type="search" placeholder="Try a beach, a boat trip, or a little local culture…" autocomplete="off" /><button class="button primary" type="submit">Explore <Icon name="arrow" size={18} /></button></form>
-  <nav class="category-bar" aria-label="Filter by experience">{categories.map(category => <button type="button" class:list={['category', { active: category.name === 'All' }]} data-category={category.name} aria-pressed={category.name === 'All'}><Icon name={category.icon} /><span>{category.label || category.name}</span></button>)}</nav>
-  <section class="map-section" aria-labelledby="map-heading">
-    <div class="section-heading"><div><h2 id="map-heading">A little look around</h2><p id="location-label"><span class="status-dot"></span>Starting in Bãi Cháy · demo location</p></div><button id="locate" class="button secondary" type="button"><Icon name="locate" size={18} /><span>Use my location</span></button></div>
-    <div class="map-frame"><DemoMap /><div id="live-map" class="live-map" hidden aria-label="Interactive map of Ha Long attractions"></div><span id="live-map-label" class="live-map-label" hidden>Tap a pin to explore</span></div>
-    <div class="map-footnote"><span><span class="legend-dot"></span>Places to discover <span class="legend-dot blue"></span>Your starting point</span><span id="map-status" role="status">Loading the map… You can already explore the illustrated pins.</span></div>
-    <button id="retry-map" class="reset-location" type="button" hidden>Try the live map again</button>
-    <p id="location-message" class="location-message" role="status"></p>
+<Layout wide>
+  <section class="hero" aria-labelledby="hero-heading">
+    <img class="hero-image" src="/images/mev9zaoqveug1.jpeg" alt="Người đội nón lá giữa những bó hương đỏ và vàng xếp thành vòng" width="3000" height="2000" fetchpriority="high" loading="eager" />
+    <div class="hero-shade"></div>
+    <div class="hero-content shell">
+      <div class="hero-copy">
+      <p class="eyebrow">Văn hiến. Sáng tạo. Trải nghiệm</p>
+      <h1 id="hero-heading"><span>Khám phá</span><strong>Hà Nội</strong><span>của riêng bạn</span></h1>
+      <p class="hero-description">Từ mặt hồ bình yên đến những con phố đầy câu chuyện.</p>
+      <a class="button hero-button" href="#explore">Khám phá Hà Nội <Icon name="arrow" size={21} /></a>
+      </div>
+    </div>
+    <div class="hero-bottom shell"><span>Sắc hương · Nét đẹp làng nghề</span><a href="#explore" aria-label="Cuộn đến phần khám phá">Khám phá thêm <span aria-hidden="true">↓</span></a></div>
   </section>
-  <section class="results-section" aria-labelledby="results-heading">
-    <div class="section-heading results-heading"><div><p class="eyebrow">LET CURIOSITY LEAD</p><h2 id="results-heading">Good places to start</h2><p id="result-count" role="status">6 discoveries, nearest first</p></div><label class="nearby-toggle"><input type="checkbox" id="nearby" /><span>Within 10 km</span></label></div>
-    <div id="results" class="results-grid">{initialPlaces.map(place => <article class="place-card" data-card={place.slug}><a class="card-image-link" href={`/places/${place.slug}/`} aria-label={`Discover ${place.name}`}><PlaceArt place={place} /><span class="card-category">{place.category}</span></a><div class="card-body"><p class="card-area"><Icon name="pin" size={13} />{place.area}<span class="card-distance" data-distance={place.slug}>{formatDistance(distanceKm(demoLocation, place.coordinates))} away</span></p><h3><a href={`/places/${place.slug}/`}>{place.name}</a></h3><p class="card-description">{place.description}</p><div class="card-bottom"><span>{place.access}</span><a class="card-action" href={`/places/${place.slug}/`} aria-label={`View ${place.name}`}><Icon name="arrow" size={18} /></a></div></div></article>)}</div>
-    <div id="empty-state" class="empty-state" hidden><Icon name="compass" size={40} /><h3>A little further afield?</h3><p>No places match those filters. Try another search or widen your distance.</p><button id="reset-filters" type="button" class="button secondary">Show all discoveries</button></div>
-    <p class="sample-note">A small, curated sample for this prototype. Distances are straight-line estimates; islands require a boat.</p>
+
+  <section class="welcome shell" aria-labelledby="welcome-heading">
+    <p class="eyebrow">HÀ NỘI, VIỆT NAM</p>
+    <h2 id="welcome-heading">Một ngày dạo bước.<br />Một miền ký ức.</h2>
+    <p>Chọn một nơi. Đi thật chậm. Khám phá Hà Nội theo cách của bạn.</p>
+    <div class="welcome-links"><a href="#results-heading">6 địa điểm để bắt đầu <Icon name="arrow" size={20} /></a><a href="#map-heading">Dạo một vòng Hà Nội <Icon name="pin" size={20} /></a></div>
   </section>
-  <aside class="closing-note"><Icon name="boat" size={34} /><div><h3>The best days leave a little room for discovery.</h3><p>Pick a place. Take your time. Make Ha Long your own.</p></div><span>HẠ LONG, VIỆT NAM</span></aside>
+
+  <div id="explore" class="explore-section">
+    <div class="shell">
+      <section class="discovery-tools" aria-label="Tìm kiếm và lọc địa điểm">
+        <form id="search-form" class="search-bar" role="search">
+          <Icon name="search" size={25} />
+          <label class="sr-only" for="search">Tìm địa điểm ở Hà Nội</label>
+          <input id="search" type="search" placeholder="Tìm Hồ Tây, Phố Cổ, di sản…" autocomplete="off" />
+          <button class="button primary" type="submit">Khám phá <Icon name="arrow" size={20} /></button>
+        </form>
+        <nav id="experiences" class="category-bar" aria-label="Lọc theo trải nghiệm">{categories.map(category => <button type="button" class:list={['category', { active: category.name === 'All' }]} data-category={category.name} aria-pressed={category.name === 'All'}><Icon name={category.icon} /><span>{category.label || category.name}</span></button>)}</nav>
+      </section>
+
+      <section class="map-section" aria-labelledby="map-heading">
+        <div class="section-heading">
+          <div><p class="eyebrow">BẢN ĐỒ KHÁM PHÁ</p><h2 id="map-heading">Dạo một vòng Hà Nội</h2><p id="location-label"><span class="status-dot"></span>Bắt đầu tại Hồ Hoàn Kiếm · vị trí mẫu</p></div>
+          <button id="locate" class="button secondary" type="button"><Icon name="locate" size={20} /><span>Dùng vị trí của tôi</span></button>
+        </div>
+        <div class="map-frame"><DemoMap /><div id="live-map" class="live-map" hidden aria-label="Bản đồ tương tác các địa điểm Hà Nội"></div><span id="live-map-label" class="live-map-label" hidden>Chọn một ghim để khám phá</span></div>
+        <div class="map-footnote"><span><span class="legend-dot"></span>Địa điểm khám phá <span class="legend-dot blue"></span>Điểm xuất phát</span><span id="map-status" role="status">Đang tải bản đồ… Bạn có thể chọn ghim trên sơ đồ minh họa.</span></div>
+        <button id="retry-map" class="reset-location" type="button" hidden>Thử tải lại bản đồ tương tác</button>
+        <p id="location-message" class="location-message" role="status"></p>
+      </section>
+
+      <section class="results-section" aria-labelledby="results-heading">
+        <div class="section-heading results-heading">
+          <div><p class="eyebrow">THEO BƯỚC TÒ MÒ</p><h2 id="results-heading">Bắt đầu từ<br />những nơi này.</h2><p id="result-count" role="status">{initialPlaces.length} địa điểm, gần nhất trước</p></div>
+          <label class="nearby-toggle"><input type="checkbox" id="nearby" /><span>Trong bán kính 10 km</span></label>
+        </div>
+        <div id="results" class="results-grid">
+          {initialPlaces.map(place => <article class="place-card" data-card={place.slug}>
+            <a class="card-image-link" href={`/places/${place.slug}/`} aria-label={`Khám phá ${place.name}`}><PlaceArt place={place} /><span class="card-category">{place.category}</span><span class="image-arrow" aria-hidden="true"><Icon name="arrow" size={24} /></span></a>
+            <div class="card-body">
+              <p class="card-area"><Icon name="pin" size={14} />{place.area}<span class="card-distance" data-distance={place.slug}>Cách {formatDistance(distanceKm(demoLocation, place.coordinates))}</span></p>
+              <h3><a href={`/places/${place.slug}/`}>{place.name}</a></h3>
+              <p class="card-description">{place.description}</p>
+              <div class="card-bottom"><span>{place.access}</span><a class="card-action" href={`/places/${place.slug}/`} aria-label={`Xem ${place.name}`}><Icon name="arrow" size={21} /></a></div>
+            </div>
+          </article>)}
+        </div>
+        <div id="empty-state" class="empty-state" hidden><Icon name="compass" size={40} /><h3>Thử khám phá xa hơn nhé?</h3><p>Không có địa điểm phù hợp. Hãy đổi từ khóa hoặc bỏ giới hạn khoảng cách.</p><button id="reset-filters" type="button" class="button primary">Hiện tất cả địa điểm</button></div>
+        <p class="sample-note">6 địa điểm tuyển chọn cho bản mẫu. Tọa độ gần đúng; khoảng cách tính theo đường chim bay, không phải quãng đường hay thời gian di chuyển.</p>
+      </section>
+    </div>
+  </div>
+
+  <div class="editorial-topics shell">
+    <section id="food" aria-labelledby="food-heading"><h2 id="food-heading">Ẩm thực</h2><p>Khám phá hương vị Hà Nội trong những lần dạo phố. Nội dung gợi ý quán ăn đang được chuẩn bị.</p></section>
+    <section id="events" aria-labelledby="events-heading"><h2 id="events-heading">Sự kiện</h2><p>Lịch sự kiện đang được chuẩn bị. Hãy kiểm tra thông tin từ đơn vị tổ chức trước khi lên kế hoạch.</p></section>
+    <section id="local-tips" aria-labelledby="tips-heading"><h2 id="tips-heading">Thổ địa mách bạn</h2><p>Đi thật chậm, chọn một góc phố và đọc những lời nhắn nhỏ trong từng trang địa điểm trước khi đến.</p><a href="#results-heading">Xem gợi ý địa điểm →</a></section>
+  </div>
+
+  <aside class="closing-note">
+    <div class="shell"><p class="eyebrow">My Hanoi</p><h2>Mỗi góc phố đều có<br />một câu chuyện.</h2><p>Chọn một nơi. Đi thật chậm. Khám phá Hà Nội theo cách của bạn.</p><a class="button closing-button" href="#explore">Tìm góc Hà Nội của bạn <Icon name="arrow" size={21} /></a><span class="closing-destination">HÀ NỘI, VIỆT NAM</span></div>
+  </aside>
 </Layout>
 <script>import '../scripts/explore';</script>

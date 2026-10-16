@@ -1,13 +1,80 @@
 ---
 import Icon from '../components/Icon.astro';
 import '../styles/global.css';
-interface Props { title?: string; description?: string }
-const { title = 'A little Ha Long — find your next little adventure', description = 'Explore Ha Long, Vietnam. A small guide to the bay, beaches, culture, and local food.' } = Astro.props;
+interface Props { title?: string; description?: string; wide?: boolean }
+const {
+  title = 'My Hanoi — khám phá theo cách của bạn',
+  description = 'Khám phá Hồ Hoàn Kiếm, Phố Cổ, Văn Miếu, Hoàng thành Thăng Long, Hồ Tây và Cầu Long Biên qua bản đồ Hà Nội.',
+  wide = false,
+} = Astro.props;
+const navigation = [
+  { href: '/#results-heading', label: 'Điểm đến' },
+  { href: '/#experiences', label: 'Trải nghiệm' },
+  { href: '/#food', label: 'Ẩm thực' },
+  { href: '/#events', label: 'Sự kiện' },
+  { href: '/#local-tips', label: 'Thổ địa mách bạn' },
+];
 ---
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content={description} /><link rel="icon" type="image/svg+xml" href="/favicon.svg" /><title>{title}</title></head>
-  <body><a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header shell"><a class="brand" href="/" aria-label="A little Ha Long home"><span class="brand-mark"><Icon name="boat" size={25} /></span><span>a little <strong>Ha Long</strong><span class="brand-caption">A LOCAL KIND OF ADVENTURE</span></span></a><span class="destination"><Icon name="pin" size={17} /> Ha Long, Vietnam <span class="country-dot"></span></span></header>
-    <main id="main" class="shell"><slot /></main><footer class="site-footer shell"><span>A little discovery. A lovely day.</span><span>Made for exploring · Ha Long PoC</span></footer>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Đến nội dung chính</a>
+    <header class="site-header">
+      <div class="header-inner shell">
+        <a class="brand" href="/" aria-label="My Hanoi — trang chủ">
+          <span class="brand-kicker">My</span><strong>Hanoi</strong>
+        </a>
+        <nav class="desktop-nav" aria-label="Điều hướng chính">
+          {navigation.map(item => <a href={item.href}>{item.label}</a>)}
+        </nav>
+        <div class="header-actions">
+          <span class="site-language">Tiếng Việt</span>
+          <a class="header-search" href="/#search" aria-label="Tìm địa điểm ở Hà Nội"><Icon name="search" size={23} /><span>Tìm kiếm</span></a>
+          <details class="mobile-menu">
+            <summary><Icon name="menu" size={24} /><span>Menu</span></summary>
+            <nav aria-label="Điều hướng trên điện thoại">
+              {navigation.map(item => <a href={item.href}>{item.label}<Icon name="arrow" size={18} /></a>)}
+              <span class="menu-location">Hà Nội, Việt Nam · Tiếng Việt</span>
+            </nav>
+          </details>
+        </div>
+      </div>
+    </header>
+    <main id="main" class:list={['site-main', { shell: !wide }]} tabindex="-1"><slot /></main>
+    <footer class="site-footer">
+      <div class="shell">
+        <div class="footer-top">
+          <div><p class="eyebrow">KHÁM PHÁ NHỮNG ĐIỀU GẦN GŨI</p><h2>Một chút khám phá.<br />Một ngày đáng nhớ.</h2></div>
+          <nav aria-label="Điều hướng cuối trang">{navigation.map(item => <a href={item.href}>{item.label}<Icon name="arrow" size={20} /></a>)}</nav>
+        </div>
+        <a class="footer-wordmark" href="/" aria-label="My Hanoi — trang chủ">My Hanoi<span>↗</span></a>
+        <div class="footer-bottom"><span>Dạo bước Hà Nội · Bản mẫu</span><span><Icon name="pin" size={15} /> Hà Nội, Việt Nam</span><a href="#main">Về đầu trang ↑</a></div>
+      </div>
+    </footer>
   </body>
 </html>
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
+  if (menu) {
+    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+  }
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu?.open) {
+      menu.open = false;
+      menu.querySelector('summary')?.focus();
+    }
+  });
+  document.addEventListener('click', event => {
+    if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+  });
+</script>
