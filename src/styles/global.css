@@ -1,5 +1,22 @@
 /* Editorial headlines use Oswald; supporting text uses Source Sans Pro. */
 :root {
+  /* Sprint 01 tokens: scoped to navigation, hero and Heritage Choice. */
+  --editorial-display: 'Lora', 'Noto Serif', Georgia, serif;
+  --editorial-body: 'Be Vietnam Pro', Arial, sans-serif;
+  --rice-paper: #F4F1EB;
+  --deep-ink: #242724;
+  --vermilion: #A63832;
+  --moss: #687367;
+  --old-gold: #B59670;
+  --editorial-width: 1320px;
+  --editorial-gutter: clamp(24px, 4.17vw, 64px);
+  --editorial-space: clamp(112px, 9vw, 144px);
+  --editorial-image-ratio: 3 / 2;
+  --editorial-type-hero: clamp(68px, 6vw, 92px);
+  --editorial-type-section: clamp(38px, 3.8vw, 56px);
+  --editorial-type-feature: clamp(30px, 2.6vw, 38px);
+  --editorial-type-support: clamp(20px, 1.8vw, 26px);
+  --editorial-type-body: 16px;
   --font-headline: 'Oswald', 'Arial Narrow', sans-serif;
   --font-body: 'Source Sans Pro', Arial, sans-serif;
   font-family: var(--font-body);
@@ -60,12 +77,25 @@ h2 { font-size: clamp(30px, 3.8vw, 52px); line-height: 1.12; letter-spacing: -1.
 .mobile-menu { display: none; }
 .site-main { min-height: 50vh; }
 
-/* Edge-to-edge local photograph; the opening fills the viewport below navigation. */
-.hero { position: relative; isolation: isolate; width: 100%; min-height: max(640px, calc(100svh - var(--header-height))); color: #fff; background: #25140f; display: flex; align-items: center; text-align: left; }
+/* Homepage header overlays the hero without changing the sticky layout on other pages. */
+.header-overlay { margin-bottom: calc(-1 * var(--header-height)); color: var(--ink); transition: background-color .25s ease, color .25s ease, border-color .25s ease; }
+.header-overlay .desktop-nav a, .header-overlay .header-search, .header-overlay .site-language, .header-overlay .mobile-menu summary { color: inherit; transition: color .25s ease, border-color .25s ease; }
+.header-overlay:not(.is-scrolled) { background: transparent; border-bottom-color: transparent; color: #fff; }
+.header-overlay:not(.is-scrolled) .site-language { border-right-color: #ffffff66; }
+.header-overlay:not(.is-scrolled) .desktop-nav a:hover { border-bottom-color: #fff; }
+.header-overlay:not(.is-scrolled) :focus-visible { outline-color: #fff; }
+.header-overlay .mobile-menu nav { color: var(--ink); }
+.header-overlay .mobile-menu nav :focus-visible { outline-color: #245bd6; }
+@media (prefers-reduced-motion: reduce) {
+  .header-overlay, .header-overlay .desktop-nav a, .header-overlay .header-search, .header-overlay .site-language, .header-overlay .mobile-menu summary { transition: none; }
+}
+
+/* Edge-to-edge local photograph fills the viewport, including behind navigation. */
+.hero { position: relative; isolation: isolate; width: 100%; min-height: max(640px, 100svh); color: #fff; background: #25140f; display: flex; align-items: center; text-align: left; }
 .hero-image, .hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
 .hero-image { object-fit: cover; object-position: 65% 45%; }
-.hero-shade { background: linear-gradient(90deg, #160b08b3, #160b0859 42%, transparent 75%), linear-gradient(0deg, #160b08b3, transparent 35%); }
-.hero-content { padding-block: 90px 120px; }
+.hero-shade { background: linear-gradient(180deg, #160b08b3, transparent 180px), linear-gradient(90deg, #160b08b3, #160b0859 42%, transparent 75%), linear-gradient(0deg, #160b08b3, transparent 35%); }
+.hero-content { padding-block: calc(var(--header-height) + 90px) 120px; }
 .hero-copy { max-width: 540px; }
 .hero .eyebrow { font-size: 11px; letter-spacing: 3px; margin-bottom: 26px; }
 .hero h1 { text-transform: uppercase; text-shadow: 0 2px 32px #102e3c55; }
@@ -78,14 +108,6 @@ h2 { font-size: clamp(30px, 3.8vw, 52px); line-height: 1.12; letter-spacing: -1.
 .hero-bottom a { display: flex; align-items: center; gap: 15px; min-height: 44px; font-size: 12px; font-weight: 700; }
 .hero-bottom a span { font-size: 26px; }
 .hero :focus-visible { outline-color: #fff; }
-
-.welcome { text-align: center; padding-block: 86px 82px; }
-.welcome .eyebrow { color: var(--red); }
-.welcome h2 { font-size: clamp(34px, 4.2vw, 58px); }
-.welcome > p:not(.eyebrow) { max-width: 620px; margin: 22px auto 0; font-size: 18px; line-height: 1.7; color: var(--muted); }
-.welcome-links { display: flex; flex-wrap: wrap; justify-content: center; column-gap: 40px; row-gap: 16px; margin-top: 30px; }
-.welcome-links a { display: inline-flex; align-items: center; gap: 14px; padding-block: 10px; font-size: 14px; font-weight: 700; border-bottom: 2px solid var(--red); }
-.welcome-links a:hover { color: var(--red); }
 
 /* Discovery stays functional while adopting the reference's editorial card rhythm. */
 .explore-section { padding-block: 60px 70px; background: var(--paper); }
@@ -133,7 +155,7 @@ h2 { font-size: clamp(30px, 3.8vw, 52px); line-height: 1.12; letter-spacing: -1.
 .map-landscape { position: absolute; width: 100%; height: 100%; }
 .demo-pin { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 7px; min-height: 44px; padding: 7px 12px 7px 7px; color: #222; background: #fff; box-shadow: 0 3px 10px #203b3520; font-size: 12px; font-weight: 700; white-space: nowrap; z-index: 2; }
 .demo-pin > span:first-child { width: 28px; height: 28px; display: grid; place-items: center; background: var(--red); color: #fff; font-size: 18px; }
-.demo-pin:hover, .demo-pin:focus-visible { background: #222; color: #fff; z-index: 5; }
+.demo-pin:hover, .demo-pin:focus-visible, .demo-pin[aria-current="true"] { background: #222; color: #fff; z-index: 5; }
 .demo-origin { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 9px; font-size: 11px; color: #25495e; }
 .demo-origin > span, .location-map-dot { display: block; width: 18px; height: 18px; background: #2477bc; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 0 7px #2477bc25; }
 .demo-origin small { font-size: 10px; }
@@ -151,7 +173,7 @@ h2 { font-size: clamp(30px, 3.8vw, 52px); line-height: 1.12; letter-spacing: -1.
 .place-map-icon, .location-map-icon { background: none; border: 0; }
 .place-map-pin { display: grid; place-items: center; width: 36px; height: 36px; background: var(--red); border: 3px solid #fff; border-radius: 50% 50% 50% 5px; transform: rotate(-45deg); box-shadow: 0 3px 10px #20202040; color: #fff; }
 .place-map-pin > span { transform: rotate(45deg); font-size: 19px; }
-.place-map-icon:hover .place-map-pin, .place-map-icon:focus-visible .place-map-pin { background: var(--ink); }
+.place-map-icon:hover .place-map-pin, .place-map-icon:focus-visible .place-map-pin, .place-map-icon.is-selected .place-map-pin { background: var(--ink); }
 .live-map .leaflet-tooltip { font: 12px var(--font-body); color: var(--ink); border-radius: 0; }
 .live-map .leaflet-control-attribution { font-size: 10px; }
 .location-map-icon .location-map-dot { width: 19px; height: 19px; }
@@ -244,9 +266,8 @@ h2 { font-size: clamp(30px, 3.8vw, 52px); line-height: 1.12; letter-spacing: -1.
   .hero h1 strong { font-size: clamp(86px, 13vw, 130px); }
   .hero h1 span { font-size: clamp(28px, 4vw, 38px); }
   .hero-image { object-position: 68% 35%; }
-  .hero-shade { background: linear-gradient(0deg, #160b08ed, #160b0899 35%, transparent 75%); }
+  .hero-shade { background: linear-gradient(180deg, #160b08b3, transparent 160px), linear-gradient(0deg, #160b08ed, #160b0899 35%, transparent 75%); }
   .hero .eyebrow { max-width: 420px; line-height: 1.8; }
-  .welcome { padding-block: 65px; }
   .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .card-body h3 { font-size: 27px; }
   .card-distance { width: auto; margin-left: auto; }
@@ -267,7 +288,7 @@ h2 { font-size: clamp(30px, 3.8vw, 52px); line-height: 1.12; letter-spacing: -1.
   .mobile-menu nav { padding: 20px; }
   .mobile-menu summary span { display: none; }
   .mobile-menu summary { min-width: 44px; }
-  .hero { min-height: max(650px, calc(100svh - var(--header-height))); }
+  .hero { min-height: max(650px, 100svh); }
   .hero-content { padding-block: 220px 100px; }
   .hero .eyebrow { max-width: 280px; font-size: 10px; letter-spacing: 1.8px; margin-bottom: 22px; }
   .hero h1 span { font-size: clamp(25px, 7vw, 37px); letter-spacing: -1px; }
@@ -277,10 +298,6 @@ h2 { font-size: clamp(30px, 3.8vw, 52px); line-height: 1.12; letter-spacing: -1.
   .hero-bottom { bottom: 15px; gap: 20px; }
   .hero-bottom > span { font-size: 9px; max-width: 150px; }
   .hero-bottom a { font-size: 10px; gap: 10px; }
-  .welcome { padding-block: 52px; }
-  .welcome h2 { font-size: 34px; letter-spacing: -1.2px; }
-  .welcome > p:not(.eyebrow) { font-size: 16px; }
-  .welcome-links { flex-direction: column; align-items: center; gap: 12px; }
   .explore-section { padding-block: 36px 45px; }
   .search-bar { gap: 10px; padding: 7px 7px 7px 14px; }
   .search-bar > svg { width: 20px; }

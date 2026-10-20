@@ -15,6 +15,15 @@ const retryMap = document.querySelector<HTMLButtonElement>('#retry-map')!;
 const cards = new Map(Array.from(document.querySelectorAll<HTMLElement>('[data-card]')).map(card => [card.dataset.card!, card]));
 const pins = Array.from(document.querySelectorAll<HTMLElement>('[data-pin]'));
 const categories = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-category]'));
+const mapSidebar = document.querySelector<HTMLElement>('#map-sidebar')!;
+const districtList = document.querySelector<HTMLElement>('#map-districts')!;
+const placeDetail = document.querySelector<HTMLElement>('#map-place-detail')!;
+const detailContent = document.querySelector<HTMLElement>('#map-detail-content')!;
+const districtLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-map-place]'));
+const detailTemplates = new Map(Array.from(document.querySelectorAll<HTMLTemplateElement>('[data-map-detail]')).map(template => [template.dataset.mapDetail!, template]));
+let selectedSlug: string | undefined;
+let selectionTrigger: HTMLElement | undefined;
+let districtScrollTop = 0;
 let category: Category | 'All' = 'All';
 let origin: Coordinates = { ...demoLocation };
 let usingLocation = false;
@@ -23,6 +32,61 @@ let locationMarker: Leaflet.Marker | undefined;
 let connecting = false;
 let tileTimeout: number | undefined;
 const markers = new Map<string, Leaflet.Marker>();
+
+function updateMapSelection() {
+  for (const pin of pins) {
+    if (pin.dataset.pin === selectedSlug) pin.setAttribute('aria-current', 'true');
+    else pin.removeAttribute('aria-current');
+  }
+  for (const [slug, marker] of markers) {
+    const element = marker.getElement();
+    element?.classList.toggle('is-selected', slug === selectedSlug);
+    element?.setAttribute('aria-pressed', String(slug === selectedSlug));
+    marker.setZIndexOffset(slug === selectedSlug ? 500 : 0);
+  }
+}
+
+function showMapPlace(slug: string, trigger?: HTMLElement) {
+  const template = detailTemplates.get(slug);
+  const place = places.find(candidate => candidate.slug === slug);
+  if (!template || !place) return;
+  if (!districtList.hidden) districtScrollTop = mapSidebar.scrollTop;
+  selectedSlug = slug;
+  selectionTrigger = trigger;
+  // Removing the previous iframe stops playback; template videos stay inert until selected.
+  detailContent.replaceChildren(template.content.cloneNode(true));
+  districtList.hidden = true;
+  placeDetail.hidden = false;
+  mapSidebar.scrollTop = 0;
+  updateMapSelection();
+  map?.panTo([place.coordinates.lat, place.coordinates.lng], { animate: false });
+  detailContent.querySelector<HTMLElement>('h3')?.focus({ preventScroll: true });
+  if (window.matchMedia('(max-width: 900px)').matches) mapSidebar.scrollIntoView({ block: 'nearest' });
+}
+
+function closeMapPlace(restoreFocus = true) {
+  placeDetail.hidden = true;
+  detailContent.replaceChildren();
+  districtList.hidden = false;
+  selectedSlug = undefined;
+  mapSidebar.scrollTop = districtScrollTop;
+  updateMapSelection();
+  if (restoreFocus) {
+    const triggerVisible = selectionTrigger?.isConnected && !selectionTrigger.closest('[hidden]');
+    const target = triggerVisible ? selectionTrigger : document.querySelector<HTMLElement>('#districts-heading');
+    target?.focus({ preventScroll: true });
+  }
+  selectionTrigger = undefined;
+}
+
+document.querySelector('#map-detail-back')!.addEventListener('click', () => closeMapPlace());
+for (const link of [...pins, ...districtLinks]) link.addEventListener('click', event => {
+  if (!(event instanceof MouseEvent) || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+  const slug = link.dataset.pin ?? link.dataset.mapPlace;
+  if (!slug || !detailTemplates.has(slug)) return;
+  event.preventDefault();
+  showMapPlace(slug, link);
+});
 
 function render() {
   const filtered = findPlaces(places, search.value, category, origin, nearby.checked);
@@ -34,6 +98,14 @@ function render() {
     results.append(card);
   }
   for (const pin of pins) pin.hidden = !visible.has(pin.dataset.pin!);
+  for (const link of districtLinks) link.closest('li')!.hidden = !visible.has(link.dataset.mapPlace!);
+  for (const district of document.querySelectorAll<HTMLElement>('.district-entry')) {
+    const links = Array.from(district.querySelectorAll<HTMLElement>('[data-map-place]'));
+    const count = links.filter(link => visible.has(link.dataset.mapPlace!)).length;
+    district.querySelector<HTMLElement>('[data-district-count]')!.textContent = String(count);
+    district.querySelector<HTMLElement>('[data-district-empty]')!.hidden = count > 0;
+  }
+  if (selectedSlug && !visible.has(selectedSlug)) closeMapPlace(false);
   if (map) for (const [slug, marker] of markers) {
     if (visible.has(slug) && !map.hasLayer(marker)) marker.addTo(map);
     else if (!visible.has(slug) && map.hasLayer(marker)) marker.remove();
@@ -132,6 +204,7 @@ async function connectMap() {
     let failedTiles = 0;
     // Standard browser image caching and referrer headers are retained.
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      referrerPolicy: 'strict-origin-when-cross-origin',
       maxZoom: 19,
       attribution: '&copy; Những người đóng góp cho <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     });
@@ -159,8 +232,11 @@ async function connectMap() {
         title: `Khám phá ${place.name}`,
         icon: L.divIcon({ className: 'place-map-icon', html: pin, iconSize: [36, 36], iconAnchor: [18, 36], tooltipAnchor: [0, -36] }),
       }).bindTooltip(label, { direction: 'top' });
-      marker.on('add', () => { marker.getElement()?.setAttribute('aria-label', `Khám phá ${place.name}`); });
-      marker.on('click', () => { window.location.assign(`/places/${place.slug}/`); });
+      marker.on('add', () => {
+        marker.getElement()?.setAttribute('aria-label', `Xem câu chuyện ${place.name}`);
+        updateMapSelection();
+      });
+      marker.on('click', () => { showMapPlace(place.slug, marker.getElement()); });
       markers.set(place.slug, marker);
     }
     const dot = document.createElement('span'); dot.className = 'location-map-dot';

@@ -1,58 +1,45 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
-import DemoMap from '../components/DemoMap.astro';
+import IMap from '../components/imap/IMap.astro';
 import PlaceArt from '../components/PlaceArt.astro';
+import HeritageChoice from '../components/HeritageChoice.astro';
 import { places, demoLocation } from '../data/places';
 import { distanceKm, findPlaces, formatDistance } from '../lib/explore';
-import 'leaflet/dist/leaflet.css';
 const initialPlaces = findPlaces(places, '', 'All', demoLocation);
-const categories = [{ name: 'All', icon: 'compass', label: 'Tất cả' }, { name: 'Hồ & cảnh quan', icon: 'compass' }, { name: 'Phố & cầu', icon: 'pin' }, { name: 'Di sản', icon: 'culture' }];
 ---
-<Layout wide>
+<Layout wide overlayHeader>
   <section class="hero" aria-labelledby="hero-heading">
+    <svg class="hero-tone-map" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="hero-shadow-detail" color-interpolation-filters="sRGB">
+          <feComponentTransfer>
+            <feFuncR type="gamma" amplitude="1" exponent="0.86" offset="0" />
+            <feFuncG type="gamma" amplitude="1" exponent="0.86" offset="0" />
+            <feFuncB type="gamma" amplitude="1" exponent="0.86" offset="0" />
+          </feComponentTransfer>
+        </filter>
+      </defs>
+    </svg>
     <img class="hero-image" src="/images/mev9zaoqveug1.jpeg" alt="Người đội nón lá giữa những bó hương đỏ và vàng xếp thành vòng" width="3000" height="2000" fetchpriority="high" loading="eager" />
     <div class="hero-shade"></div>
     <div class="hero-content shell">
       <div class="hero-copy">
-      <p class="eyebrow">Văn hiến. Sáng tạo. Trải nghiệm</p>
-      <h1 id="hero-heading"><span>Khám phá</span><strong>Hà Nội</strong><span>của riêng bạn</span></h1>
-      <p class="hero-description">Từ mặt hồ bình yên đến những con phố đầy câu chuyện.</p>
+      <p class="eyebrow">KHÁM PHÁ THEO CÁCH CỦA BẠN</p>
+      <h1 id="hero-heading"><span>Hà Nội</span><span>của riêng bạn.</span></h1>
+      <p class="hero-description">Từ những góc phố quen đến những câu chuyện chưa kể. Khám phá một Hà Nội mang dấu ấn của riêng bạn.</p>
       <a class="button hero-button" href="#explore">Khám phá Hà Nội <Icon name="arrow" size={21} /></a>
       </div>
     </div>
     <div class="hero-bottom shell"><span>Sắc hương · Nét đẹp làng nghề</span><a href="#explore" aria-label="Cuộn đến phần khám phá">Khám phá thêm <span aria-hidden="true">↓</span></a></div>
   </section>
 
-  <section class="welcome shell" aria-labelledby="welcome-heading">
-    <p class="eyebrow">HÀ NỘI, VIỆT NAM</p>
-    <h2 id="welcome-heading">Một ngày dạo bước.<br />Một miền ký ức.</h2>
-    <p>Chọn một nơi. Đi thật chậm. Khám phá Hà Nội theo cách của bạn.</p>
-    <div class="welcome-links"><a href="#results-heading">6 địa điểm để bắt đầu <Icon name="arrow" size={20} /></a><a href="#map-heading">Dạo một vòng Hà Nội <Icon name="pin" size={20} /></a></div>
-  </section>
+  <HeritageChoice />
 
   <div id="explore" class="explore-section">
     <div class="shell">
-      <section class="discovery-tools" aria-label="Tìm kiếm và lọc địa điểm">
-        <form id="search-form" class="search-bar" role="search">
-          <Icon name="search" size={25} />
-          <label class="sr-only" for="search">Tìm địa điểm ở Hà Nội</label>
-          <input id="search" type="search" placeholder="Tìm Hồ Tây, Phố Cổ, di sản…" autocomplete="off" />
-          <button class="button primary" type="submit">Khám phá <Icon name="arrow" size={20} /></button>
-        </form>
-        <nav id="experiences" class="category-bar" aria-label="Lọc theo trải nghiệm">{categories.map(category => <button type="button" class:list={['category', { active: category.name === 'All' }]} data-category={category.name} aria-pressed={category.name === 'All'}><Icon name={category.icon} /><span>{category.label || category.name}</span></button>)}</nav>
-      </section>
-
-      <section class="map-section" aria-labelledby="map-heading">
-        <div class="section-heading">
-          <div><p class="eyebrow">BẢN ĐỒ KHÁM PHÁ</p><h2 id="map-heading">Dạo một vòng Hà Nội</h2><p id="location-label"><span class="status-dot"></span>Bắt đầu tại Hồ Hoàn Kiếm · vị trí mẫu</p></div>
-          <button id="locate" class="button secondary" type="button"><Icon name="locate" size={20} /><span>Dùng vị trí của tôi</span></button>
-        </div>
-        <div class="map-frame"><DemoMap /><div id="live-map" class="live-map" hidden aria-label="Bản đồ tương tác các địa điểm Hà Nội"></div><span id="live-map-label" class="live-map-label" hidden>Chọn một ghim để khám phá</span></div>
-        <div class="map-footnote"><span><span class="legend-dot"></span>Địa điểm khám phá <span class="legend-dot blue"></span>Điểm xuất phát</span><span id="map-status" role="status">Đang tải bản đồ… Bạn có thể chọn ghim trên sơ đồ minh họa.</span></div>
-        <button id="retry-map" class="reset-location" type="button" hidden>Thử tải lại bản đồ tương tác</button>
-        <p id="location-message" class="location-message" role="status"></p>
-      </section>
+      <IMap idPrefix="home-imap" searchId="search" filtersId="experiences" headerSelector=".site-header" showFullLink
+        resultsId="results" nearbyId="nearby" resultCountId="result-count" emptyStateId="empty-state" resetFiltersId="reset-filters" />
 
       <section class="results-section" aria-labelledby="results-heading">
         <div class="section-heading results-heading">
@@ -86,4 +73,7 @@ const categories = [{ name: 'All', icon: 'compass', label: 'Tất cả' }, { nam
     <div class="shell"><p class="eyebrow">My Hanoi</p><h2>Mỗi góc phố đều có<br />một câu chuyện.</h2><p>Chọn một nơi. Đi thật chậm. Khám phá Hà Nội theo cách của bạn.</p><a class="button closing-button" href="#explore">Tìm góc Hà Nội của bạn <Icon name="arrow" size={21} /></a><span class="closing-destination">HÀ NỘI, VIỆT NAM</span></div>
   </aside>
 </Layout>
-<script>import '../scripts/explore';</script>
+<style>
+  /* Local Explorer canvas; do not recolor map tiles, panels or cards. */
+  #explore { background: #FFFFFF; }
+</style>

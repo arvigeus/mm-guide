@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "include": [".astro/types.d.ts", "src/**/*", "tests/**/*.ts", "docs/architecture/**/*.ts", "astro.config.mjs"],
+  "exclude": ["node_modules", "dist", "output"]
 }

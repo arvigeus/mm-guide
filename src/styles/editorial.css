@@ -1,0 +1,136 @@
+/* Nordic editorial structure × Vietnamese cultural luxury.
+   Legacy destination, map and footer styles deliberately remain untouched. */
+.site-header {
+  font-family: var(--editorial-body);
+  background: var(--homepage-header-surface, var(--rice-paper));
+  border-bottom-color: transparent;
+}
+.site-header .header-inner, .hero .hero-content, .hero .hero-bottom {
+  width: calc(100% - var(--editorial-gutter) * 2);
+  max-width: var(--editorial-width);
+  padding-inline: 0;
+}
+.site-header .header-inner { gap: 40px; }
+.site-header .brand {
+  align-self: center;
+  width: 88px;
+  height: 64px;
+  padding: 8px 12px;
+  background: var(--vermilion);
+}
+.site-header .brand-kicker { font-size: 11px; margin-bottom: 0; }
+.site-header .brand strong {
+  font-family: var(--editorial-display);
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+.site-header .desktop-nav { gap: clamp(18px, 2.1vw, 30px); }
+.site-header .desktop-nav a, .site-header .header-search { font-size: 12px; font-weight: 500; }
+.site-header .site-language { font-size: 11px; }
+.site-header .header-actions { gap: 20px; }
+/* Homepage surface only: preserve other pages and global paper tokens.
+   #EAE5DA is reserved for future cultural storytelling, not the page canvas. */
+.site-header.header-overlay { --homepage-header-surface: #F8F7F3; }
+.site-header.header-overlay .mobile-menu nav { background: var(--homepage-header-surface); }
+.site-header.header-overlay.is-scrolled { color: var(--deep-ink); background: var(--homepage-header-surface); }
+.site-header.header-overlay:not(.is-scrolled) {
+  color: var(--deep-ink);
+  background: var(--homepage-header-surface);
+}
+.site-header.header-overlay:not(.is-scrolled) .site-language { border-right-color: #24272430; }
+.site-header.header-overlay:not(.is-scrolled) .desktop-nav a:hover { color: var(--vermilion); border-bottom-color: var(--old-gold); }
+.site-header.header-overlay:not(.is-scrolled) :focus-visible { outline-color: var(--vermilion); }
+.site-header .mobile-menu summary { min-height: 44px; }
+.site-header .mobile-menu nav a { min-height: 48px; }
+
+.hero.hero {
+  min-height: max(720px, 92svh);
+  align-items: center;
+  background: var(--deep-ink);
+  font-family: var(--editorial-body);
+}
+.hero .hero-image {
+  object-position: 65% 43%;
+  /* A mild gamma curve lifts existing shadow detail, holding black/white points.
+     No saturation boost or uniform exposure increase. */
+  filter: url('#hero-shadow-detail');
+}
+.hero .hero-shade {
+  background: linear-gradient(90deg, rgb(18 13 9 / .28), rgb(18 13 9 / .08) 34%, transparent 55%);
+}
+.hero .hero-tone-map { position: absolute; width: 0; height: 0; pointer-events: none; }
+.hero .hero-content { padding-block: calc(var(--header-height) + 72px) 132px; }
+.hero .hero-copy { max-width: 590px; }
+.hero .hero-copy h1 { text-wrap: nowrap; }
+.hero .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .19em; line-height: 1.8; margin-bottom: 26px; }
+.hero h1 {
+  font-family: var(--editorial-display);
+  font-weight: 400;
+  text-transform: none;
+  text-shadow: none;
+  letter-spacing: -.045em;
+}
+.hero h1 span {
+  display: block;
+  font-family: inherit;
+  font-size: var(--editorial-type-hero);
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -.045em;
+}
+.hero .hero-description { max-width: 370px; margin-block: 28px 30px; font-size: var(--editorial-type-body); line-height: 1.85; text-wrap: pretty; }
+.hero .hero-button {
+  justify-content: space-between;
+  min-height: 52px;
+  gap: 28px;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid #ffffff90;
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+.hero .hero-button svg { transition: transform .2s ease; }
+.hero .hero-button:hover { background: transparent; border-bottom-color: #fff; }
+.hero .hero-button:hover svg { transform: translateX(4px); }
+.hero .hero-bottom { bottom: 24px; font-size: 10px; letter-spacing: .04em; }
+.hero .hero-bottom a { font-size: 11px; font-weight: 400; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero .hero-copy { animation: editorial-enter .7s ease-out both; }
+  @keyframes editorial-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+}
+@media (max-width: 1100px) {
+  .site-header .header-inner { gap: 24px; }
+  .site-header .header-actions { gap: 12px; }
+  .hero .hero-copy { max-width: 510px; }
+  .hero h1 span { font-size: 68px; }
+}
+@media (max-width: 700px) {
+  :root { --editorial-gutter: 24px; --editorial-space: 72px; }
+  .site-header .brand { width: 80px; height: 56px; padding: 6px 10px; }
+  .site-header.header-overlay:not(.is-scrolled) { color: var(--deep-ink); background: var(--homepage-header-surface); }
+  .site-header.header-overlay:not(.is-scrolled) :focus-visible { outline-color: var(--vermilion); }
+  .site-header .brand strong { font-size: 22px; }
+  .site-header .mobile-menu nav { background: var(--homepage-header-surface, var(--rice-paper)); box-shadow: none; }
+  /* A separate photographic panel preserves the artisan, rather than putting
+     mobile text over their hat and hands. No photograph darkening on mobile. */
+  .hero.hero { display: block; min-height: 0; padding-top: var(--header-height); color: var(--deep-ink); background: var(--rice-paper); }
+  .hero .hero-image { position: relative; display: block; height: clamp(320px, 49svh, 520px); object-position: 66% 35%; }
+  .hero .hero-shade { display: none; }
+  .hero .hero-content { padding-block: 32px 36px; }
+  .hero .hero-copy { max-width: 520px; }
+  .hero .eyebrow { max-width: none; font-size: 9px; letter-spacing: .13em; margin-bottom: 14px; }
+  .hero h1 span { font-size: clamp(42px, 11.1vw, 68px); line-height: 1.2; letter-spacing: -.045em; }
+  .hero .hero-description { max-width: 440px; font-size: 16px; line-height: 1.8; margin-block: 20px 14px; }
+  .hero .hero-button { font-size: 13px; color: var(--deep-ink); border-bottom-color: var(--old-gold); }
+  .hero .hero-button:hover { border-bottom-color: var(--deep-ink); }
+  .hero .hero-bottom { position: static; padding-block: 0 22px; }
+  .hero .hero-bottom > span { max-width: none; font-size: 9px; color: #535c52; }
+  .hero .hero-bottom a { font-size: 10px; }
+  .hero :focus-visible { outline-color: var(--vermilion); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero .hero-button svg, .hero .hero-button { transition: none; }
+}

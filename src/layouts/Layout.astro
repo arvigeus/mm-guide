@@ -1,11 +1,13 @@
 ---
 import Icon from '../components/Icon.astro';
 import '../styles/global.css';
-interface Props { title?: string; description?: string; wide?: boolean }
+import '../styles/editorial.css';
+interface Props { title?: string; description?: string; wide?: boolean; overlayHeader?: boolean }
 const {
   title = 'My Hanoi — khám phá theo cách của bạn',
   description = 'Khám phá Hồ Hoàn Kiếm, Phố Cổ, Văn Miếu, Hoàng thành Thăng Long, Hồ Tây và Cầu Long Biên qua bản đồ Hà Nội.',
   wide = false,
+  overlayHeader = false,
 } = Astro.props;
 const navigation = [
   { href: '/#results-heading', label: 'Điểm đến' },
@@ -24,12 +26,12 @@ const navigation = [
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Oswald:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
   </head>
   <body>
     <a class="skip-link" href="#main">Đến nội dung chính</a>
-    <header class="site-header">
+    <header class:list={['site-header', { 'header-overlay': overlayHeader }]}>
       <div class="header-inner shell">
         <a class="brand" href="/" aria-label="My Hanoi — trang chủ">
           <span class="brand-kicker">My</span><strong>Hanoi</strong>
@@ -64,6 +66,19 @@ const navigation = [
   </body>
 </html>
 <script>
+  const header = document.querySelector<HTMLElement>('.header-overlay');
+  if (header) {
+    const hero = document.querySelector<HTMLElement>('.hero');
+    const updateHeader = () => {
+      const boundary = hero ? hero.offsetTop + hero.offsetHeight - header.offsetHeight : 24;
+      header.classList.toggle('is-scrolled', window.scrollY >= boundary);
+    };
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    window.addEventListener('resize', updateHeader, { passive: true });
+    window.addEventListener('pageshow', updateHeader);
+  }
+
   const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
   if (menu) {
     menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
