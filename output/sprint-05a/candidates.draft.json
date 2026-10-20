@@ -1,5 +1,8 @@
 {
-  "manifestVersion": "sprint-05a.audit.v1",
+  "manifestVersion": "sprint-05a.audit.v3",
+  "revision": "05A.1 — final review and GitHub master synchronization",
+  "clientApprovedReplacement": "Kem Trang Tien replaced by Dinh Le as experience; not application publication approval",
+  "editorialStructureStatus": "8 core / 2 linked approved; facts, media and publication remain draft",
   "auditDate": "2026-10-20",
   "publicationStatus": "draft",
   "scope": "Desk-research shortlist only; not an application catalog or publication approval.",
@@ -12,7 +15,7 @@
       "DestinationRecord still uses the legacy Category type. ImapDestinationRecord replaces only category with the approved four-ID union.",
       "This audit manifest deliberately includes nullable/unverified facts and evidence metadata; it is not directly assignable to DestinationRecord or PublishedDestination.",
       "PublishedDestination requires approved publication and verified cover/video assets. No candidate gains those approvals here.",
-      "The two existing candidates reuse ho-hoan-kiem and pho-co; do not duplicate them as new records. Other IDs below are proposals only."
+      "The two existing candidates reuse ho-hoan-kiem and pho-co; do not duplicate them as new records. All other retained candidate IDs are unchanged. The retired kem-trang-tien-35 ID is preserved in retiredCandidates and is never reassigned to Dinh Le; pho-sach-dinh-le is a new draft-only identity."
     ]
   },
   "approvedCategories": [
@@ -34,7 +37,7 @@
     "matchesApplicationHelper": "src/lib/explore.ts::distanceKm",
     "rounding": "Nearest metre for review arithmetic, not positional accuracy.",
     "unknownCoordinates": "coordinates, distanceFromApprovedCenterM and outside1km are null; never interpret null as zero or inside.",
-    "limitations": "Reference-point distance only, not a walking route, verified entrance distance or containment of an entire area. No geocoder, tile scan or application code execution was used."
+    "limitations": "Reference-point distance only, not a walking route, verified entrance distance or containment of an entire area. Final review used two manual public Nominatim lookups as documentary leads, followed by direct OSM object checks; no geocoder was installed or integrated, no tiles scanned, and no application code executed."
   },
   "summary": {
     "candidateCount": 10,
@@ -42,11 +45,14 @@
     "existingCandidatesInCore": 2,
     "proposedNewCoreCandidates": 6,
     "mergeOrContextCandidates": 2,
-    "candidatesWithSourcedReferenceCoordinates": 5,
-    "candidatesWithUnknownCoordinates": 5,
+    "candidatesWithSourcedReferenceCoordinates": 7,
+    "candidatesWithUnknownCoordinates": 3,
     "candidatesOutside1kmAtKnownReferencePoint": 0,
-    "radiusEligibilityPendingForCandidates": 5,
-    "note": "This is not ten new verified pins or a guarantee of 8-12 distinct published destinations within 1 km. All rows remain drafts."
+    "radiusEligibilityPendingForCandidates": 1,
+    "coreRadiusEligibilityPending": 1,
+    "nullCoordinatesIncludeTwoLinkedEntriesWithoutStandalonePins": true,
+    "linkedEntriesWithoutIndependentPins": 2,
+    "note": "Eight core / two linked retained. Seven core reference pins are sourced. Giang remains unresolved because two mapped nodes claim the same branch/address; no arbitrary point is accepted. The theatre now has an operator-matched mapped-building reference. La Terrasse and the pedestrian-area experience are linked entries, not two extra markers. No new story is publication-approved."
   },
   "sources": [
     {
@@ -137,6 +143,101 @@
       "checkedOn": "2026-10-20",
       "evidence": "Search-index lead refers to Tet Viet - Tet Pho 2026 and pedestrian space around Hoan Kiem.",
       "limitations": "Not accepted as current operational/schedule verification."
+    },
+    {
+      "id": "dinh-le-hust",
+      "url": "https://library.hust.edu.vn/vi/node/938",
+      "type": "university-library-institutional-guide",
+      "accessStatus": "page-fetched",
+      "checkedOn": "2026-10-20",
+      "evidence": "Separate sections identify Pho sach Dinh Le and Pho sach Ha Noi 19/12. The Dinh Le section locates the street in Hoan Kiem and names Nha sach Mao at So 5 Dinh Le among its bookshops.",
+      "limitations": "Institutional documentary identity/highlight evidence, not a street survey. Do not adopt its generalized shop hours, transport details or historical dates for this audit. Older ward wording is not a current-boundary verification."
+    },
+    {
+      "id": "dinh-le-vna-identity",
+      "url": "https://www.vietnamplus.vn/hanh-trinh-tu-cho-am-phu-den-khong-gian-pho-sach-ha-noi-post427587.vnp",
+      "type": "Vietnam-News-Agency-reporting",
+      "accessStatus": "page-fetched",
+      "checkedOn": "2026-10-20",
+      "evidence": "Distinguishes established bookshop streets including Dinh Le from the planned Ha Noi Book Street on 19-12 Street, which connects Hai Ba Trung and Ly Thuong Kiet.",
+      "limitations": "Historical identity distinction only. Its 19-12 opening information is not evidence of Dinh Le hours or access and is not adopted."
+    },
+    {
+      "id": "dinh-le-osm-way",
+      "url": "https://www.openstreetmap.org/api/0.6/way/28187501/full.json",
+      "humanUrl": "https://www.openstreetmap.org/way/28187501",
+      "type": "primary-open-map-geometry",
+      "accessStatus": "single named street object fetched; no tiles or bulk query",
+      "checkedOn": "2026-10-20",
+      "evidence": "Way 28187501 version 34 is tagged name=Pho Dinh Le, name:en=Dinh Le Street. Its node list includes node 309597640, version 7, lat=21.0256720, lon=105.8545573. That existing interior street node is the proposed representative anchor, not a fabricated midpoint or a shop entrance.",
+      "objectTimestamp": "2026-10-03T07:03:07Z",
+      "nodeTimestamp": "2023-12-23T06:49:54Z",
+      "attribution": "OpenStreetMap and contributors",
+      "licenseUrl": "https://www.openstreetmap.org/copyright",
+      "limitations": "Community-maintained mapped geometry, not an official government survey. Street identity is corroborated by HUST and VNA; no numeric coordinate is attributed to those textual sources. Representative point only; no claim of a unique street entrance or Nha sach Mao position. Traffic/access tags are not adopted as operating hours."
+    },
+    {
+      "id": "giang-about-us",
+      "url": "https://cafegiang.vn/pages/about-us",
+      "type": "operator-hosted-about-page-republishing-third-party-copy",
+      "accessStatus": "page-fetched",
+      "checkedOn": "2026-10-20",
+      "evidence": "Lists Co so 1: Ngo 39 Nguyen Huu Huan separately from Lotte Mall and 57 Trang Tien. Confirms an alley-access description for the intended branch.",
+      "limitations": "Page credits compiled MIA.vn material; not independent fresh reporting or an entrance survey. No coordinates established. Quoted prices, hours, histories and images are not adopted."
+    },
+    {
+      "id": "puppet-official-contact",
+      "url": "https://nhahatmuaroithanglong.vn/en/lien-he/",
+      "type": "theatre-operator-contact",
+      "accessStatus": "page-fetched",
+      "checkedOn": "2026-10-20",
+      "evidence": "Operator contact page explicitly lists Address: 57B Dinh Tien Hoang, Hoan Kiem, Hanoi, and website nhahatmuaroithanglong.vn.",
+      "limitations": "Advances address verification from guide-only to operator-confirmed. Homepage map embed includes a viewport center, but no independently confirmed entrance/feature coordinate was established. Show times, prices and media are not adopted."
+    },
+    {
+      "id": "pedestrian-2026-holiday-lead",
+      "url": "https://hoankiem.hanoi.gov.vn/thong-bao/thong-bao-dieu-chinh-thoi-gian-hoat-dong-cac-khong-gian-di-bo-tren-dia-ban-phuong-hoan-kiem-trong-thoi-gian-nghi-le-30-4-01-5-2812260425103624261.htm",
+      "type": "ward-government-notice-lead",
+      "accessStatus": "search-index-only; direct fetch failed",
+      "checkedOn": "2026-10-20",
+      "evidence": "Indexed notice concerns adjustments for the 30 April - 1 May 2026 holiday.",
+      "limitations": "Unfetched holiday-specific lead, not accepted evidence of ordinary October 2026 access hours, current boundaries or a standalone pin."
+    },
+    {
+      "id": "giang-osm-conflict",
+      "url": "https://www.openstreetmap.org/api/0.6/nodes.json?nodes=4306911795,4311854914",
+      "discoveryUrl": "https://nominatim.openstreetmap.org/search?q=Cafe%20Giang%2039%20Nguyen%20Huu%20Huan%20Hanoi&format=jsonv2&limit=3&addressdetails=1",
+      "type": "primary-open-map-records-with-conflicting-location",
+      "accessStatus": "manual lookup and two named node records fetched",
+      "checkedOn": "2026-10-20",
+      "evidence": "Both nodes claim housenumber 39 and Pho Nguyen Huu Huan. Node 4306911795 v7: Ca Phe Giang, 21.0342713,105.8544991. Node 4311854914 v11: Ca Phe Giang - Ca Phe Trung, 21.0336060,105.8546223; phone 0917002299 matches the operator homepage, but this alone does not resolve the competing mapped location.",
+      "limitations": "Both are plausible documentary leads, not approved entrance/reference coordinates. Do not average them, choose the first search result, or mistake a match of tags for field confirmation.",
+      "attribution": "OpenStreetMap and contributors",
+      "licenseUrl": "https://www.openstreetmap.org/copyright"
+    },
+    {
+      "id": "puppet-map-lookup",
+      "url": "https://nominatim.openstreetmap.org/search?q=Thang%20Long%20Water%20Puppet%20Theatre%2057B%20Dinh%20Tien%20Hoang%20Hanoi&format=jsonv2&limit=3&addressdetails=1",
+      "type": "manual-open-map-feature-lookup",
+      "accessStatus": "single manual lookup fetched",
+      "checkedOn": "2026-10-20",
+      "evidence": "Returns theatre way 1190941789 at 57B Pho Dinh Tien Hoang, representative lat 21.0317043, lon 105.8534550. This is the mapped feature representative, not the earlier operator map viewport and not the Citadel theatre.",
+      "limitations": "Representative building point, not a surveyed accessible entrance. Identity cross-checked against direct OSM tags and the operator contact page.",
+      "attribution": "OpenStreetMap and contributors",
+      "licenseUrl": "https://www.openstreetmap.org/copyright"
+    },
+    {
+      "id": "puppet-osm-way",
+      "url": "https://www.openstreetmap.org/api/0.6/way/1190941789/full.json",
+      "humanUrl": "https://www.openstreetmap.org/way/1190941789",
+      "type": "primary-open-map-feature-geometry",
+      "accessStatus": "single feature object fetched",
+      "checkedOn": "2026-10-20",
+      "evidence": "Way 1190941789 v3, amenity=theatre, building=yes, name:en=Thang Long Water Puppet Theatre, housenumber 57B, Pho Dinh Tien Hoang. Phone +84 24 38249494 and email marketingthanglongwpt@gmail.com match the operator contact page. The lookup point lies within this building's mapped extent.",
+      "objectTimestamp": "2026-05-08T23:47:21Z",
+      "limitations": "Community map, not government survey. Mapped opening_hours and legacy website are not adopted; use the current operator contact for identity. Public/accessible entrance, performance schedule and media rights remain unverified.",
+      "attribution": "OpenStreetMap and contributors",
+      "licenseUrl": "https://www.openstreetmap.org/copyright"
     }
   ],
   "candidates": [
@@ -232,38 +333,46 @@
       "proposedDisposition": "shortlist-new-core",
       "categoryId": "food-drink",
       "categoryStatus": "proposed-editorial-mapping",
-      "address": { "value": "39 Nguyễn Hữu Huân, Hà Nội", "kind": "street-address", "status": "operator-page-confirmed", "sourceIds": ["giang-official"] },
+      "address": { "value": "39 Nguyễn Hữu Huân, Hà Nội", "kind": "street-address", "status": "operator-page-confirmed", "sourceIds": ["giang-official", "giang-about-us"], "accessNote": "Operator-hosted about page specifies Ngo 39 (alley); actual entrance/path remains unverified." },
       "coordinates": null,
-      "coordinateEvidence": { "status": "unverified", "sourceIds": ["giang-official"], "reason": "Fetched operator text confirms the branch/address but no accepted pin. No geocoding or search-answer coordinate was substituted.", "entranceVerified": false },
+      "coordinateEvidence": { "status": "unresolved-conflicting-mapped-points", "sourceIds": ["giang-official", "giang-about-us", "giang-osm-conflict"], "reason": "Final review found two distinct OSM nodes claiming 39 Nguyen Huu Huan. One matches the operator phone, but the point conflict and actual alley entrance remain unresolved. No arbitrary coordinate accepted.", "entranceVerified": false },
+      "coordinateLeads": [
+        { "osmNodeId": 4306911795, "lat": 21.0342713, "lng": 105.8544991, "distanceFromApprovedCenterM": 664, "status": "unaccepted-conflicting-location", "sourceId": "giang-osm-conflict" },
+        { "osmNodeId": 4311854914, "lat": 21.0336060, "lng": 105.8546223, "distanceFromApprovedCenterM": 599, "status": "unaccepted-conflicting-location-despite-matching-phone", "sourceId": "giang-osm-conflict" }
+      ],
       "distanceFromApprovedCenterM": null,
       "outside1km": null,
-      "radiusCaveat": "1 km eligibility remains unverified until this branch's entrance/reference pin is sourced.",
-      "sourceUrls": ["https://cafegiang.vn/"],
-      "verificationStatus": "partial-desk-verified; coordinates-and-radius-unverified",
+      "radiusCaveat": "Both unaccepted leads calculate inside 1 km (664 m and 599 m), but this does not settle the correct venue/entrance. Accepted coordinate/distance stay null until resolved.",
+      "sourceUrls": ["https://cafegiang.vn/", "https://cafegiang.vn/pages/about-us", "https://www.openstreetmap.org/api/0.6/nodes.json?nodes=4306911795,4311854914"],
+      "verificationStatus": "address-confirmed; hold-new-marker-for-coordinate-conflict; media-unverified",
       "proposedEditorialStoryAngle": "Cà phê trứng như một nghề gia đình: cách thưởng thức và câu chuyện được chính quán kể, không thêm giai thoại chưa kiểm chứng.",
       "overlapsWithCandidateIds": ["pho-co"],
       "overlapNote": "Old Quarter editorial context, not an audited boundary assertion. Do not substitute Giang's 57 Trang Tien or LotteMall Tay Ho branches.",
       "openingHours": null, "ticketPrice": null, "cover": { "status": "missing" }, "video": { "status": "missing" }
     },
     {
-      "id": "kem-trang-tien-35",
-      "name": "Kem Tràng Tiền — 35 Tràng Tiền",
-      "englishName": "Trang Tien Ice Cream — proposed 35 Trang Tien location",
+      "id": "pho-sach-dinh-le",
+      "name": "Phố sách Đinh Lễ",
+      "englishName": "Dinh Le Book Street",
       "existingDestinationId": null,
-      "proposedDisposition": "shortlist-new-core-pending-operator-confirmation",
-      "categoryId": "food-drink",
-      "categoryStatus": "proposed-editorial-mapping",
-      "address": { "value": "35 Tràng Tiền, phường Cửa Nam, Hà Nội", "kind": "candidate-street-address", "status": "unverified-search-index-only", "sourceIds": ["icecream-official-contact"] },
-      "coordinates": null,
-      "coordinateEvidence": { "status": "unverified", "reason": "Operator contact page could not be inspected within the response-size limit; no pin accepted.", "entranceVerified": false },
-      "distanceFromApprovedCenterM": null,
-      "outside1km": null,
-      "radiusCaveat": "Do not assert inside 1 km from a street name alone.",
-      "sourceUrls": ["https://kemtrangtien.vn/lien-he?m=167"],
-      "verificationStatus": "unverified-address-and-pin; primary-page-review-pending",
-      "proposedEditorialStoryAngle": "Một điểm dừng ăn kem trên phố Tràng Tiền: ký ức đô thị và thói quen thưởng thức, sau khi xác nhận đúng cửa hàng.",
+      "proposedDisposition": "shortlist-new-core",
+      "categoryId": "experience",
+      "categoryStatus": "owner-specified",
+      "address": { "value": "Phố Đinh Lễ, Hoàn Kiếm, Hà Nội", "kind": "street-area-not-single-shop-address", "status": "institutional-source-confirmed; current-ward-boundary-not-audited", "sourceIds": ["dinh-le-hust", "dinh-le-vna-identity"] },
+      "coordinates": { "lat": 21.0256720, "lng": 105.8545573 },
+      "coordinateEvidence": { "status": "desk-verified-representative-node-on-named-street", "sourceIds": ["dinh-le-osm-way", "dinh-le-hust", "dinh-le-vna-identity"], "osmWayId": 28187501, "osmWayVersion": 34, "osmNodeId": 309597640, "osmNodeVersion": 7, "meaning": "approximate-editorial-street-anchor", "representativeNodeOnNamedStreetVerified": true, "entranceVerified": false, "reason": "Copied from an existing node in the named Dinh Le street geometry, not invented or assigned to Nha sach Mao. Community map verification, not a government survey or a unique entrance." },
+      "distanceFromApprovedCenterM": 389,
+      "outside1km": false,
+      "radiusCaveat": "Haversine distance from approved center is 389.353 m before rounding. Street anchor only; not walking distance, a shop entrance or a claim that every associated shop is inside the circle.",
+      "sourceUrls": ["https://library.hust.edu.vn/vi/node/938", "https://www.vietnamplus.vn/hanh-trinh-tu-cho-am-phu-den-khong-gian-pho-sach-ha-noi-post427587.vnp", "https://www.openstreetmap.org/api/0.6/way/28187501/full.json", "https://www.openstreetmap.org/way/28187501"],
+      "verificationStatus": "client-replacement-approved; street-node-and-389m-rechecked; access-media-and-publication-pending",
+      "proposedEditorialStoryAngle": "Nơi Hà Nội cất giữ những trang sách cũ.",
+      "storyAngleStatus": "owner-specified; not a claim that every shop sells only used books",
+      "storyHighlights": [
+        { "name": "Nhà sách Mão", "reportedAddress": "Số 5 Đinh Lễ", "status": "institutional-guide-reported; current-shop-access-unverified", "sourceIds": ["dinh-le-hust"], "separateMarker": false, "coordinates": null, "note": "Possible story highlight within the single street destination only; no separate destination ID, shop pin, hours or media inferred." }
+      ],
       "overlapsWithCandidateIds": [],
-      "overlapNote": "Brand/branch identity must be checked. The kem35.com contact page names a different company/address and was not accepted as corroboration of this location.",
+      "overlapNote": "One street destination only. Explicitly NOT Hanoi Book Street on 19/12 Street. Nha sach Mao is a possible highlight, not an extra marker or core count.",
       "openingHours": null, "ticketPrice": null, "cover": { "status": "missing" }, "video": { "status": "missing" }
     },
     {
@@ -271,17 +380,17 @@
       "name": "La Terrasse — Metropole Hanoi",
       "englishName": "La Terrasse",
       "existingDestinationId": null,
-      "proposedDisposition": "merge-into-metropole-or-hold-separate-pin",
+      "proposedDisposition": "linked-story-to-metropole-no-standalone-marker",
       "categoryId": "food-drink",
       "categoryStatus": "proposed-editorial-mapping",
       "address": { "value": "Sofitel Legend Metropole Hanoi, 15 Ngô Quyền, Hà Nội", "kind": "parent-property-address", "status": "parent-property-confirmed; separate-entrance-unverified", "sourceIds": ["terrasse-official", "metropole-location"] },
       "coordinates": null,
-      "coordinateEvidence": { "status": "unverified-separate-venue-pin", "reason": "Same hotel property; do not copy the hotel's marker to manufacture a second independently verified venue coordinate.", "entranceVerified": false },
+      "coordinateEvidence": { "status": "independent-pin-not-applicable-for-approved-linked-entry", "reason": "Approved as a hotel-linked story, not a separate marker. Do not copy the hotel's coordinate to manufacture another pin. Actual venue access remains unverified.", "entranceVerified": false },
       "distanceFromApprovedCenterM": null,
       "outside1km": null,
       "radiusCaveat": "Parent hotel's reference point is 508 m away; a distinct La Terrasse entrance/pin and its distance remain unverified.",
       "sourceUrls": ["https://www.sofitel-legend-metropole-hanoi.com/dining/la-terrasse/", "https://www.sofitel-legend-metropole-hanoi.com/location/"],
-      "verificationStatus": "partial-desk-verified; co-location-decision-and-pin-pending",
+      "verificationStatus": "partial-desk-verified; linked-structure-approved; venue-access-and-media-pending",
       "proposedEditorialStoryAngle": "Một khoảng dừng trên hiên phố: quan sát nhịp Hà Nội qua trải nghiệm cà phê và ẩm thực ngoài trời.",
       "overlapsWithCandidateIds": ["sofitel-legend-metropole-hanoi"],
       "overlapNote": "Same property, different offering. Recommend a linked food/drink story within the hotel rather than inflating distinct geographic stop counts.",
@@ -316,14 +425,14 @@
       "proposedDisposition": "shortlist-new-core",
       "categoryId": "experience",
       "categoryStatus": "proposed-editorial-mapping",
-      "address": { "value": "57B Đinh Tiên Hoàng, Hà Nội", "kind": "street-address", "status": "tourism-guide-confirmed; entrance-review-pending", "sourceIds": ["tourism-attractions", "puppet-official"] },
-      "coordinates": null,
-      "coordinateEvidence": { "status": "unverified", "reason": "No accepted venue-specific coordinate retrieved. A search result for a Citadel venue is explicitly rejected below.", "entranceVerified": false },
-      "distanceFromApprovedCenterM": null,
-      "outside1km": null,
-      "radiusCaveat": "Venue identity/address supported, but 1 km eligibility awaits a correct Hoan Kiem venue pin.",
-      "sourceUrls": ["https://nhahatmuaroithanglong.vn/en/", "https://vietnam.travel/things-to-do/11-must-see-attractions-ha-noi"],
-      "verificationStatus": "partial-desk-verified; coordinates-and-radius-unverified",
+      "address": { "value": "57B Đinh Tiên Hoàng, Hà Nội", "kind": "street-address", "status": "operator-contact-confirmed; entrance-review-pending", "sourceIds": ["tourism-attractions", "puppet-official", "puppet-official-contact"] },
+      "coordinates": { "lat": 21.0317043, "lng": 105.8534550 },
+      "coordinateEvidence": { "status": "operator-matched-open-map-building-reference-desk-verified", "sourceIds": ["puppet-official-contact", "puppet-map-lookup", "puppet-osm-way"], "osmWayId": 1190941789, "osmWayVersion": 3, "meaning": "approximate-editorial-feature-reference", "entranceVerified": false, "reason": "Direct named building geometry/address and matching operator phone/email corroborate the lookup representative point. Not an embedded-map viewport, surveyed door or Citadel venue." },
+      "distanceFromApprovedCenterM": 359,
+      "outside1km": false,
+      "radiusCaveat": "359.131 m before rounding from approved center to the mapped building representative; not walking distance or verified accessible entrance.",
+      "sourceUrls": ["https://nhahatmuaroithanglong.vn/en/lien-he/", "https://www.openstreetmap.org/way/1190941789", "https://www.openstreetmap.org/api/0.6/way/1190941789/full.json", "https://nominatim.openstreetmap.org/search?q=Thang%20Long%20Water%20Puppet%20Theatre%2057B%20Dinh%20Tien%20Hoang%20Hanoi&format=jsonv2&limit=3&addressdetails=1"],
+      "verificationStatus": "operator-matched-feature-reference-and-radius-desk-verified; entrance-media-and-publication-pending",
       "proposedEditorialStoryAngle": "Từ mặt nước sân khấu đến câu chuyện làng quê: gợi mở cách xem múa rối nước, không hứa lịch diễn hay chỗ ngồi chưa xác nhận.",
       "overlapsWithCandidateIds": [],
       "overlapNote": "Do not confuse the 57B Dinh Tien Hoang venue with Thang Long Water Puppetry - Citadel theatre at the Imperial Citadel.",
@@ -339,11 +448,11 @@
       "categoryStatus": "proposed-editorial-mapping",
       "address": { "value": "Khu vực hồ Hoàn Kiếm và phụ cận, Hà Nội", "kind": "area-not-street-address", "status": "historical-source-confirmed-area; current-boundary-unverified", "sourceIds": ["pedestrian-historical", "pedestrian-2026-lead"] },
       "coordinates": null,
-      "coordinateEvidence": { "status": "unverified-area-anchor", "reason": "An area/time-dependent experience has no audited single entrance or extent. Do not copy the lake center as a newly verified pedestrian-area pin.", "entranceVerified": false },
+      "coordinateEvidence": { "status": "independent-pin-not-applicable-for-approved-linked-entry; area-extent-unverified", "reason": "Approved as a lake-linked experience with no standalone marker. Do not copy the lake center as a newly verified pedestrian-area pin; current extent/access remains unverified.", "entranceVerified": false },
       "distanceFromApprovedCenterM": null,
       "outside1km": null,
       "radiusCaveat": "Boundary and anchor are unverified; proximity of the name does not establish the entire pedestrian area is within 1 km.",
-      "sourceUrls": ["https://vietnam.travel/things-to-do/festival-event/get-ha-noi-2024", "https://hoankiem.hanoi.gov.vn/di-tich-lich-su-va-le-hoi-truyen-thong/tet-viet-tet-pho-2026-lan-toa-gia-tri-van-hoa-tet-truyen-thong-trong-khu-pho-co-2812260309154445777.htm"],
+      "sourceUrls": ["https://vietnam.travel/things-to-do/festival-event/get-ha-noi-2024", "https://hoankiem.hanoi.gov.vn/di-tich-lich-su-va-le-hoi-truyen-thong/tet-viet-tet-pho-2026-lan-toa-gia-tri-van-hoa-tet-truyen-thong-trong-khu-pho-co-2812260309154445777.htm", "https://hoankiem.hanoi.gov.vn/thong-bao/thong-bao-dieu-chinh-thoi-gian-hoat-dong-cac-khong-gian-di-bo-tren-dia-ban-phuong-hoan-kiem-trong-thoi-gian-nghi-le-30-4-01-5-2812260425103624261.htm"],
       "verificationStatus": "historical-evidence-only; current-access-boundary-and-schedule-unverified",
       "proposedEditorialStoryAngle": "Khi không gian quanh hồ dành chỗ cho người đi bộ: nhịp gặp gỡ và sinh hoạt cộng đồng, chỉ gắn thời điểm sau khi xác nhận lịch hiện hành.",
       "overlapsWithCandidateIds": ["ho-hoan-kiem", "den-ngoc-son"],
@@ -377,14 +486,64 @@
       "reason": "Fetched page names CONG TY CO PHAN TRANG TIEN TRANG TIEN 35 at 138, to 10, Pho Phuc Tan. Its identity/address does not establish the requested 35 Trang Tien location; not accepted as corroboration."
     }
   ],
+  "retiredCandidates": [
+    {
+      "id": "kem-trang-tien-35",
+      "name": "Kem Tràng Tiền — 35 Tràng Tiền",
+      "existingDestinationId": null,
+      "formerCategoryId": "food-drink",
+      "formerDisposition": "shortlist-new-core-pending-operator-confirmation",
+      "retiredOn": "2026-10-20",
+      "replacementCandidateId": "pho-sach-dinh-le",
+      "reason": "Owner-directed editorial replacement in Sprint 05A.1; no longer in the active shortlist. ID retained here for history and not reassigned.",
+      "formerAddress": { "value": "35 Tràng Tiền, phường Cửa Nam, Hà Nội", "status": "unverified-search-index-only" },
+      "coordinates": null,
+      "distanceFromApprovedCenterM": null,
+      "outside1km": null,
+      "verificationStatusAtRetirement": "unverified-address-and-pin; primary-page-review-pending",
+      "sourceUrls": ["https://kemtrangtien.vn/lien-he?m=167"],
+      "formerEditorialStoryAngle": "Một điểm dừng ăn kem trên phố Tràng Tiền: ký ức đô thị và thói quen thưởng thức, sau khi xác nhận đúng cửa hàng.",
+      "openingHours": null, "ticketPrice": null, "cover": { "status": "missing" }, "video": { "status": "missing" }
+    }
+  ],
+  "editorialDecisionLog": [
+    {
+      "date": "2026-10-20",
+      "decision": "Replace active kem-trang-tien-35 with new draft pho-sach-dinh-le; preserve the retired ID/history and every other existing candidate/application ID.",
+      "categoryId": "experience",
+      "editorialAngle": "Nơi Hà Nội cất giữ những trang sách cũ.",
+      "identityConstraint": "Historic bookshop street on Dinh Le, not Hanoi Book Street on 19/12 Street.",
+      "markerConstraint": "One Dinh Le street destination; Nha sach Mao is only an optional story highlight, not a separate marker or count.",
+      "structure": "8 core / 2 linked retained. La Terrasse links to Metropole; pedestrian-area experience links to the lake.",
+      "publicationApproval": false
+    }
+  ],
+  "verificationTasks05A1": [
+    { "task": "Dinh Le identity, representative street coordinate and distance", "status": "completed-desk-verification", "result": "Institutional/VNA identity evidence plus named OSM way/node; 21.0256720, 105.8545573; 389 m from the approved center. Not a surveyed shop entrance." },
+    { "task": "Nha sach Mao treatment", "status": "completed-editorial-scoping", "result": "Institutional guide reports So 5 Dinh Le; retain as possible story highlight only. Current shop access, hours and media remain unverified." },
+    { "task": "Giang branch and entrance", "status": "hold-conflicting-map-points", "result": "Operator address/phone rechecked. Two raw OSM nodes claim 39 Nguyen Huu Huan at different points (664 m and 599 m); accepted coordinate/distance remain null. Resolve with operator-confirmed entrance evidence, not arbitrary choice or averaging." },
+    { "task": "Hoan Kiem puppet theatre address and pin", "status": "completed-desk-reference-verification; entrance-pending", "result": "Mapped theatre way 1190941789 matches operator address, phone and email; representative 21.0317043,105.8534550 is 359 m away. A building feature reference, not an accessible-door survey. Old viewport/Citadel leads are not used." },
+    { "task": "Pedestrian-area current arrangements", "status": "pending-source-access-and-current-confirmation", "result": "2026 holiday notice located in government search index but direct fetch failed. Holiday notice and 2024 listing do not establish the ordinary October schedule or extent; keep hours null and no standalone marker." },
+    { "task": "La Terrasse linked access context", "status": "linked-structure-confirmed-access-pending", "result": "Keep the operator-backed hotel relationship and parent address; no independent coordinate is required or fabricated for a linked story. Actual access conditions remain unverified." },
+    { "task": "Sourced-pin entrances, access and media", "status": "pending-editorial-or-field-review", "result": "Existing lake/Old Quarter IDs and pins preserved; review approximate cathedral/temple/hotel references as needed. All hours/prices/media remain unadopted; no blanket verification or publication approval." }
+  ],
+  "displayReadinessBefore05B": {
+    "approvedExistingCoreRecordsRemainUntouched": ["ho-hoan-kiem", "pho-co"],
+    "holdNewMarker": [{ "id": "cafe-giang-nguyen-huu-huan", "reason": "Conflicting mapped branch points; accepted pin/distance null." }],
+    "deskReferenceOnlyNotSurveyedEntrance": ["den-ngoc-son", "nha-tho-lon-ha-noi", "pho-sach-dinh-le", "sofitel-legend-metropole-hanoi", "nha-hat-mua-roi-thang-long-hoan-kiem"],
+    "newCoreStoriesNotReadyForFullyVerifiedPublication": ["den-ngoc-son", "nha-tho-lon-ha-noi", "cafe-giang-nguyen-huu-huan", "pho-sach-dinh-le", "sofitel-legend-metropole-hanoi", "nha-hat-mua-roi-thang-long-hoan-kiem"],
+    "blockers": ["All six new core candidates lack approved rights-cleared cover/video assets under the shared publication contract.", "No new candidate is authorized for application insertion by this audit; any approved prototype placeholder exception must be explicit rather than called verified media.", "Cathedral coordinate remains secondary-source; review it before treating it as an approved new marker. Venue/accessible-entry and Metropole non-guest-access assumptions remain open."],
+    "linkedStories": "La Terrasse remains linked to Metropole; pedestrian-area experience remains linked to the lake. No independent pins or inflated core count; current access/media still pending."
+  },
+  "billingImpact05A1": "Documentation-only replacement/verification, no application publication, runtime requests, paid supplier commitment or asset adoption. The existing Sprint 05A USD 0/month incremental configured application-service assessment in docs/billing.md is unchanged under the same assumptions/exclusions; research/labor and future rights/media work remain unquoted. Only the two authorized audit files are edited.",
   "approvalGatesBefore05B": [
-    "Approve the eight core editorial candidates and whether La Terrasse/pedestrian area should be linked stories instead of separate markers.",
-    "Verify all five missing coordinate/entrance anchors and recompute their distances; do not assume they pass the 1 km filter.",
-    "Review the approximate sourced pins, especially the secondary cathedral coordinate, for correct public/accessible entrances without changing the original approved pins implicitly.",
-    "Confirm the ice-cream operator/address directly and the current pedestrian-area boundary/access schedule with competent local sources.",
+    "Maintain the approved eight-core/two-linked structure with Dinh Le replacing retired Kem Trang Tien. Do not add Nha sach Mao as a ninth core marker or 19/12 as a substitute.",
+    "Resolve Giang's two conflicting map points before accepting a new marker. The Hoan Kiem puppet theatre now has a desk-verified building reference; review appropriate public/accessible entry without describing that point as a surveyed entrance. Linked stories still have no independent marker.",
+    "Review sourced reference points for appropriate public/accessible context, especially the secondary cathedral coordinate; Dinh Le is a street anchor, not a shop entrance. Do not change the original approved pins implicitly.",
+    "Confirm current pedestrian-area arrangements and venue access from competent sources. Retired ice-cream identity research is no longer an active-shortlist requirement.",
     "Confirm venue operating/access conditions, prices and hours only if needed; this audit does not supply them.",
     "Obtain destination-specific, rights-cleared cover/video assets and approvals. No source-page images/videos were adopted or licensed.",
-    "Approve category/editorial mappings and practical facts separately from application publication. Preserve the original six records and all approved behavior.",
+    "Approve individual facts and publication separately from structural/category/story-angle decisions. Preserve the original six records and all approved behavior.",
     "Stop for editorial approval; no app import, build, preview restart, production integration or content population is authorized by this manifest."
   ]
 }
