@@ -27,7 +27,7 @@ export function nearestSheetState(height: number, available: number): SheetState
     < Math.abs(sheetStateHeight(nearest, available) - height) ? state : nearest, 'collapsed');
 }
 
-export function nearbyDestinations(place: Place, all: Place[], limit = 3) {
+export function nearbyDestinations<T extends Pick<Place, 'slug' | 'coordinates'>>(place: T, all: T[], limit = 3) {
   return all.filter(candidate => candidate.slug !== place.slug)
     .map(candidate => ({ place: candidate, km: distanceKm(place.coordinates, candidate.coordinates) }))
     .sort((a, b) => a.km - b.km).slice(0, limit);

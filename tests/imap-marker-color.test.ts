@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const css = readFileSync(new URL('../src/styles/imap-prototype.css', import.meta.url), 'utf8');
-const route = readFileSync(new URL('../src/pages/imap-prototype.astro', import.meta.url), 'utf8');
+const route = readFileSync(new URL('../src/components/imap/PrototypeExplorer.astro', import.meta.url), 'utf8');
 const controller = readFileSync(new URL('../src/scripts/imap-prototype.ts', import.meta.url), 'utf8');
 // Source-contract checks only, not computed browser styles or visual acceptance.
 const rules = Array.from(css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g))

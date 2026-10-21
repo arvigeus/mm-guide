@@ -11,7 +11,7 @@ import { categoryIconPath, categoryIconSvg, clusterProjectedPoints, createNeighb
   filterNeighborhoodPlaces, markerCategory, offerDiscoveryArea, parseDiscoveryRadius, resolveDiscoveryLocation, type DiscoveryPlace } from '../src/lib/imap-neighborhood.ts';
 
 const controller = readFileSync(new URL('../src/scripts/imap-prototype.ts', import.meta.url), 'utf8');
-const route = readFileSync(new URL('../src/pages/imap-prototype.astro', import.meta.url), 'utf8');
+const route = readFileSync(new URL('../src/components/imap/PrototypeExplorer.astro', import.meta.url), 'utf8');
 const css = readFileSync(new URL('../src/styles/imap-prototype.css', import.meta.url), 'utf8');
 const ast = ts.createSourceFile('prototype.ts', controller, ts.ScriptTarget.Latest, true);
 function callMatching(predicate: (call: ts.CallExpression) => boolean) {

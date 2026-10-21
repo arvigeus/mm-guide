@@ -5,11 +5,12 @@ import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 import { places } from '../src/data/places.ts';
 import { districtPlaceSlugs } from '../src/data/districts.ts';
+import { prototypePlaces, prototypeDistrictPlaceSlugs } from '../src/data/imap-prototype.ts';
 import { createNeighborhoodState, discoveryCategories, filterNeighborhoodPlaces, markerCategory,
-  neighborhoodEmptyMessage, resetNeighborhoodFilters } from '../src/lib/imap-neighborhood.ts';
+  neighborhoodEmptyMessage, resetNeighborhoodFilters, type DiscoveryPlace } from '../src/lib/imap-neighborhood.ts';
 
 const controller = readFileSync(new URL('../src/scripts/imap-prototype.ts', import.meta.url), 'utf8');
-const route = readFileSync(new URL('../src/pages/imap-prototype.astro', import.meta.url), 'utf8');
+const route = readFileSync(new URL('../src/components/imap/PrototypeExplorer.astro', import.meta.url), 'utf8');
 const css = readFileSync(new URL('../src/styles/imap-prototype.css', import.meta.url), 'utf8');
 const ast = ts.createSourceFile('prototype.ts', controller, ts.ScriptTarget.Latest, true);
 const javascript = (source: string) => ts.transpileModule(source, {
@@ -31,11 +32,12 @@ const resetSource = javascript(`(${resetCallback.arguments[2]!.getText(ast)})();
 const filterFunctions = javascript(`${functionSource('filter')}\n${functionSource('syncSelection')}`);
 
 /** Executes real filter/reset callbacks against controlled DOM nodes, not a browser renderer. */
-function filterHarness() {
+function filterHarness(all: DiscoveryPlace[] = places,
+  membership: Readonly<Record<string, readonly string[]>> = districtPlaceSlugs) {
   const nodes: Record<string, { textContent: string; hidden: boolean }> = Object.fromEntries([
     '#prototype-count', '#directory-heading', '#prototype-empty', '#prototype-empty-message', '#prototype-filter-feedback',
   ].map(id => [id, { textContent: '', hidden: true }]));
-  const buttons = places.map(place => {
+  const buttons = all.map(place => {
     const item = { hidden: false }; const attributes = new Map<string, string>();
     return { dataset: { selectPlace: place.slug }, item, attributes,
       closest: () => item, setAttribute: (name: string, value: string) => attributes.set(name, value) };
@@ -43,13 +45,13 @@ function filterHarness() {
   const evidence = { rendered: [] as string[], renderedSelection: undefined as string | undefined,
     closes: 0, restoreFocus: true, circles: [] as Array<number | 'All'>, focus: false };
   const context = {
-    places, districtPlaceSlugs, createNeighborhoodState, discoveryCategories, filterNeighborhoodPlaces,
+    places: all, districtPlaceSlugs: membership, createNeighborhoodState, discoveryCategories, filterNeighborhoodPlaces,
     markerCategory, neighborhoodEmptyMessage, resetNeighborhoodFilters,
     state: createNeighborhoodState(), selected: undefined as string | undefined,
     clusterIds: undefined as Set<string> | undefined, visible: new Set<string>(),
     search: { value: '', focus: (options: { preventScroll: boolean }) => { assert(options.preventScroll); evidence.focus = true; } },
     categorySelect: { value: 'All' }, districtSelect: { value: 'All' }, radiusSelect: { value: '1000' },
-    districtOptions: Object.keys(districtPlaceSlugs).map(value => ({ value, hidden: false, textContent: '' })),
+    districtOptions: Object.keys(membership).map(value => ({ value, hidden: false, textContent: '' })),
     categoryOptions: discoveryCategories.map(category => ({ value: category.id, textContent: '' })),
     directory: buttons, directoryAll: { hidden: true }, clearFilters: { hidden: true },
     reopen: { hidden: true }, story: { hidden: true }, discovery: { textContent: '' },
@@ -144,6 +146,45 @@ test('search, category, radius and neighborhood compose without silently resetti
   assert.match(nodes['#prototype-empty-message']!.textContent, /từ khóa/);
   assert.equal(c.search.value, 'zzzz'); assert.equal(c.state.radius, 1000);
   assert.equal(c.categorySelect.value, 'stamp-worthy-spot'); assert.equal(c.districtSelect.value, 'Hoàn Kiếm');
+});
+
+test('05B catalog: actual filter callback synchronizes new categories, neighborhoods, selected records and counts', () => {
+  const { context: c, nodes, buttons, evidence, run } = filterHarness(prototypePlaces, prototypeDistrictPlaceSlugs);
+  run('filter()');
+  assert.equal(evidence.rendered.length, 7);
+  assert.equal(nodes['#prototype-count']!.textContent, '7 địa điểm');
+  assert.equal(buttons.filter(button => !button.item.hidden).length, 7);
+  c.selected = 'pho-sach-dinh-le'; c.story.hidden = false; run('filter(false)');
+  assert.equal(buttons.find(button => button.dataset.selectPlace === c.selected)!.attributes.get('aria-pressed'), 'true');
+  assert.equal(evidence.renderedSelection, 'pho-sach-dinh-le');
+  c.categorySelect.value = 'experience'; c.districtSelect.value = 'Hoàn Kiếm'; run('filter()');
+  assert.equal(evidence.rendered.length, 2);
+  assert.equal(buttons.filter(button => !button.item.hidden).length, 2);
+  assert.equal(nodes['#prototype-count']!.textContent, '2 địa điểm');
+  c.search.value = 'dinh le'; c.state.radius = 500; run('filter()');
+  assert.deepEqual(evidence.rendered, ['pho-sach-dinh-le']);
+  c.search.value = ''; c.categorySelect.value = 'stay'; run('filter()');
+  assert.equal(c.selected, undefined); assert.equal(c.story.hidden, true); assert.equal(c.reopen.hidden, true);
+  assert.deepEqual(evidence.rendered, []);
+  assert.match(nodes['#prototype-empty-message']!.textContent, /mở rộng bán kính/);
+  c.state.radius = 1000; run('filter()');
+  assert.deepEqual(evidence.rendered, ['sofitel-legend-metropole-hanoi']);
+  assert.equal(nodes['#prototype-count']!.textContent, '1 địa điểm');
+});
+
+test('05B catalog: held food marker remains absent and explicit reset restores seven defaults without recentering', () => {
+  const { context: c, nodes, evidence, run } = filterHarness(prototypePlaces, prototypeDistrictPlaceSlugs);
+  const center = { ...c.state.center };
+  c.categorySelect.value = 'food-drink'; c.state.radius = 'All'; c.radiusSelect.value = 'All';
+  run('filter()');
+  assert.deepEqual(evidence.rendered, []);
+  assert.match(nodes['#prototype-empty-message']!.textContent, /Danh mục này chưa/);
+  assert.equal(c.categorySelect.value, 'food-drink');
+  run(resetSource);
+  assert.deepEqual(c.state.center, center);
+  assert.equal(c.state.radius, 1000); assert.equal(c.categorySelect.value, 'All');
+  assert.equal(evidence.rendered.length, 7); assert.equal(nodes['#prototype-count']!.textContent, '7 địa điểm');
+  assert.equal(c.clearFilters.hidden, true); assert(evidence.focus);
 });
 
 test('reset/feedback and selected list cue remain accessible without changing sheet or video geometry', () => {

@@ -10,9 +10,13 @@ export type DiscoveryCategory = ImapCategoryId;
 export type DiscoveryRadius = 500 | 1000 | 2000 | 'All';
 // Future approved prototype records can use the four shared categories
 // without falsely inheriting a production sample's sightseeing category.
-export type DiscoveryPlace = Omit<Place, 'category'> & {
+export type DiscoveryPlace = Omit<Place, 'category' | 'art'> & {
+  /** New prototype records need no invented illustration classification. */
+  art?: Place['art'];
   category: Place['category'] | DiscoveryCategory;
   discoveryCategory?: DiscoveryCategory;
+  /** Optional client-supplied local photograph, shared by directory and nearby rows. */
+  portraitImage?: string;
 };
 export interface NeighborhoodState {
   center: Coordinates;
@@ -32,8 +36,9 @@ export function markerCategory(place: DiscoveryPlace): DiscoveryCategory {
   if (place.discoveryCategory) return place.discoveryCategory;
   return discoveryCategories.some(category => category.id === place.category) ? place.category as DiscoveryCategory : 'stamp-worthy-spot';
 }
-export function filterNeighborhoodPlaces(all: DiscoveryPlace[], state: NeighborhoodState): DiscoveryPlace[] {
-  const districts = state.district === 'All' ? undefined : new Set(districtPlaceSlugs[state.district] ?? []);
+export function filterNeighborhoodPlaces(all: DiscoveryPlace[], state: NeighborhoodState,
+  districtMembership: Readonly<Record<string, readonly string[]>> = districtPlaceSlugs): DiscoveryPlace[] {
+  const districts = state.district === 'All' ? undefined : new Set(districtMembership[state.district] ?? []);
   const terms = normalize(state.query).trim().split(/\s+/).filter(Boolean);
   return all.filter(place => {
     const category = markerCategory(place);

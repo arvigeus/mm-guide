@@ -1,5 +1,5 @@
-import { places, demoLocation } from '../data/places';
-import { districtPlaceSlugs } from '../data/districts';
+import { demoLocation } from '../data/places';
+import { prototypePlaces as places, prototypeDistrictPlaceSlugs as districtPlaceSlugs } from '../data/imap-prototype';
 import { createInstanceLifetime } from '../lib/imap';
 import { selectDestination, sheetStates, type SheetState } from '../lib/imap-prototype';
 import { mobileSheetHeight, nearestMobileSheetState } from '../lib/imap-mobile';
@@ -46,7 +46,7 @@ let tiles: Leaflet.TileLayer | undefined;
 let markers: Leaflet.Marker[] = [];
 let connecting = false;
 let selected: string | undefined;
-let visible = new Set(filterNeighborhoodPlaces(places, state).map(place => place.slug));
+let visible = new Set(filterNeighborhoodPlaces(places, state, districtPlaceSlugs).map(place => place.slug));
 let clusterIds: Set<string> | undefined;
 let previousFocus: HTMLElement | null = null;
 let sheetState: SheetState = 'collapsed';
@@ -98,7 +98,9 @@ function syncSelection() {
   renderMarkers();
 }
 function stopVideo() {
-  content.querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); });
+  for (const video of content.querySelectorAll('video')) { video.pause(); video.removeAttribute('src'); video.load(); }
+  // Unload the selected external player before closing or selecting another story.
+  for (const frame of content.querySelectorAll('iframe')) { frame.src = 'about:blank'; }
   content.replaceChildren();
 }
 function openPlace(slug: string, trigger?: HTMLElement) {
@@ -109,7 +111,7 @@ function openPlace(slug: string, trigger?: HTMLElement) {
   if (story.hidden) previousFocus = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
   stopVideo(); selected = slug;
   content.append(templates.get(slug)!.content.cloneNode(true));
-  content.querySelectorAll('video').forEach(video => { video.autoplay = false; });
+  for (const video of content.querySelectorAll('video')) { video.autoplay = false; }
   storyLabel.textContent = place.name;
   story.hidden = false; explorer.classList.add('has-story'); reopen.hidden = true; content.scrollTop = 0;
   filter(false);
@@ -127,8 +129,8 @@ function closeStory(restoreFocus = true) {
   // Selected pin and geographic camera survive closing; no recenter here.
   setSheetState('collapsed');
   if (restoreFocus) {
-    const target = previousFocus?.isConnected && previousFocus.getClientRects().length ? previousFocus
-      : !reopen.hidden ? reopen : discovery;
+    const fallback = reopen.hidden ? discovery : reopen;
+    const target = previousFocus?.isConnected && previousFocus.getClientRects().length ? previousFocus : fallback;
     target.focus({ preventScroll: true });
   }
 }
@@ -141,18 +143,18 @@ function openDirectory(ids?: string[]) {
 function filter(resetCluster = true) {
   if (resetCluster) clusterIds = undefined;
   state.query = search.value; state.category = categorySelect.value as DiscoveryCategory | 'All'; state.district = districtSelect.value;
-  const districtCandidates = filterNeighborhoodPlaces(places, { ...state, district: 'All' });
+  const districtCandidates = filterNeighborhoodPlaces(places, { ...state, district: 'All' }, districtPlaceSlugs);
   for (const option of districtOptions) {
     const count = districtCandidates.filter(place => (districtPlaceSlugs[option.value] ?? []).includes(place.slug)).length;
     option.hidden = count === 0 && districtSelect.value !== option.value;
     option.textContent = `${option.value} · ${count}`;
   }
-  const categoryCandidates = filterNeighborhoodPlaces(places, { ...state, category: 'All' });
+  const categoryCandidates = filterNeighborhoodPlaces(places, { ...state, category: 'All' }, districtPlaceSlugs);
   for (const option of categoryOptions) {
     const metadata = discoveryCategories.find(category => category.id === option.value)!;
     option.textContent = `${metadata.label} · ${categoryCandidates.filter(place => markerCategory(place) === option.value).length}`;
   }
-  visible = new Set(filterNeighborhoodPlaces(places, state).map(place => place.slug));
+  visible = new Set(filterNeighborhoodPlaces(places, state, districtPlaceSlugs).map(place => place.slug));
   if (clusterIds && !Array.from(clusterIds).some(id => visible.has(id))) clusterIds = undefined;
   let listed = 0;
   for (const button of directory) {
@@ -164,7 +166,7 @@ function filter(resetCluster = true) {
   if (removedSelection) { closeStory(false); selected = undefined; reopen.hidden = true; }
   document.querySelector('#prototype-count')!.textContent = `${visible.size} địa điểm`;
   discovery.textContent = `Khám phá ${visible.size} địa điểm`;
-  document.querySelector('#directory-heading')!.textContent = clusterIds ? `${listed} địa điểm trong cụm` : 'Chọn câu chuyện';
+  document.querySelector('#directory-heading')!.textContent = clusterIds ? `${listed} địa điểm trong cụm` : 'Chọn một địa điểm';
   directoryAll.hidden = !clusterIds;
   document.querySelector<HTMLElement>('#prototype-empty')!.hidden = listed !== 0;
   const emptyMessage = visible.size === 0 ? neighborhoodEmptyMessage(places, state) : '';
@@ -174,10 +176,10 @@ function filter(resetCluster = true) {
   const defaults = createNeighborhoodState();
   clearFilters.hidden = state.query === defaults.query && state.category === defaults.category
     && state.radius === defaults.radius && state.district === defaults.district && visible.size > 0;
-  content.querySelectorAll<HTMLButtonElement>('[data-nearby-place]').forEach(button => {
+  for (const button of content.querySelectorAll<HTMLButtonElement>('[data-nearby-place]')) {
     button.disabled = !visible.has(button.dataset.nearbyPlace!);
     button.title = button.disabled ? 'Địa điểm ngoài bộ lọc hiện tại' : '';
-  });
+  }
   syncSelection();
 }
 function createCategoryIcon(category: DiscoveryCategory | 'cluster') {
@@ -202,10 +204,13 @@ function renderMarkers() {
     const place = places.find(place => place.slug === (selectedInGroup ? selected : ids[0]))!;
     const clustered = group.length > 1;
     const pin = document.createElement('span'); pin.className = 'curated-pin'; pin.dataset.category = clustered ? 'cluster' : markerCategory(place);
+    // Styling hook only: no destination identity/elevation on neutral clusters.
+    if (!clustered) pin.dataset.destination = place.slug;
     // All clusters use a neutral symbol, even when a selected member has a category.
     pin.append(createCategoryIcon(clustered ? 'cluster' : markerCategory(place)));
     if (clustered) { const count = document.createElement('span'); count.className = 'cluster-count'; count.textContent = String(group.length); pin.append(count); }
-    const label = document.createElement('span'); label.textContent = selectedInGroup ? place.name : clustered ? `${group.length} địa điểm gần nhau` : place.name;
+    const groupLabel = clustered ? `${group.length} địa điểm gần nhau` : place.name;
+    const label = document.createElement('span'); label.textContent = selectedInGroup ? place.name : groupLabel;
     const marker = L.marker([place.coordinates.lat, place.coordinates.lng], {
       title: clustered ? `${group.length} địa điểm · Mở danh sách cụm` : place.name,
       icon: L.divIcon({ className: `curated-icon${selectedInGroup ? ' is-selected' : ''}`, html: pin, iconSize: [48, 48], iconAnchor: [24, 24] }),
@@ -232,8 +237,8 @@ function cameraFitOptions(marker = false) {
   const toolbarBottom = Math.max(0,
     toolbar && getComputedStyle(toolbar).visibility !== 'hidden' ? toolbar.getBoundingClientRect().bottom - rect.top : 0,
     zoom ? zoom.getBoundingClientRect().bottom - rect.top : 0);
-  const bottomOverlayHeight = getComputedStyle(status).visibility !== 'hidden'
-    ? Math.max(20, 28 + status.getBoundingClientRect().height) : 20;
+  const bottomOverlayHeight = getComputedStyle(status).visibility === 'hidden'
+    ? 20 : Math.max(20, 28 + status.getBoundingClientRect().height);
   return prototypeFitPadding({ width: size.x, height: size.y, toolbarBottom, bottomOverlayHeight,
     sheetHeight: mobile.matches ? mobileSheetHeight(sheetState, availableHeight(), videoHeight, safeArea()) : 0,
     clippedTop: Math.max(0, top - rect.top), clippedLeft: Math.max(0, left - rect.left),
@@ -456,7 +461,7 @@ const observer = new ResizeObserver(resize);
 observer.observe(mapElement); observer.observe(document.querySelector('.tools')!);
 on(window, 'pageshow', resize);
 on(window, 'pagehide', event => {
-  content.querySelectorAll('video').forEach(video => video.pause());
+  for (const video of content.querySelectorAll('video')) { video.pause(); }
   if (event instanceof PageTransitionEvent && !event.persisted) lifetime.dispose();
 });
 lifetime.onCleanup(() => {
